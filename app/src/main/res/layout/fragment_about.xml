@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/aboutFragment"
+    android:scrollbars="vertical">
+
+    <TextView
+        android:id="@+id/txtLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingStart="80pt"
+        android:paddingLeft="1pt"
+        android:phoneNumber="false"
+        android:password="false"
+        android:layout_margin="15dp"/>
+
+</RelativeLayout>

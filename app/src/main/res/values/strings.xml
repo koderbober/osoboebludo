@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Особое блюдо</string>
+    <string name="action_settings">Настройки</string>
+    <string-array name="views_array">
+        <item>Новости</item>
+        <item>Спецпроекты</item>
+        <item>Рецензии</item>
+        <item>Блоги</item>
+        <item>Календарь</item>
+        <item>О проекте</item>
+        <item>Помощь</item>
+    </string-array>
+
+    <string name="menu">Меню</string>
+    <string name="news_screen">Новости</string>
+    <string name="projects_screen">Спецпроекты</string>
+    <string name="reviews_screen">Рецензии</string>
+    <string name="blogs_screen">Блоги</string>
+    <string name="calendar_screen">Календарь</string>
+    <string name="about_screen">
+        Найти ресторан по блюду? Теперь реально!\n\n«Особое блюдо» - навигатор по блюдам в столичных ресторанах и кафе.
+        Это первый в мире ресурс для тех, кто точно знает, чего хочет.\n\nВ ресторанный каталог «Особого блюда» интегрированы
+        меню и винные карты. Чтобы найти определенное блюдо или напиток, достаточно ввести его название в строку поиска.
+        В результатах поиска отобразятся все предприятия общественного питания, где подают данное блюдо или напиток с указанием
+        цен и пользовательскими оценками.\n\nИнформация о меню регулярно обновляется представителями ресторана.\n\nКроме того,
+        каждое заведение имеет собственную страничку на портале, где публикуются новости об акциях и спецпредложениях.
+        Найти, где подают борщ на бизнес-ланч в радиусе 1 км, теперь не проблема.\n\n
+        Техническая поддержка\n
+        help@Osoboebludo.ru
+    </string>
+    <string name="help_screen">Помощь</string>
+    <string name="open_menu">Open</string>
+    <string name="close_menu">Close</string>
+    <string name="restaurantSearchButton">Поиск ресторанов</string>
+    <string name="dishSearchButton">Поиск блюд</string>
+    <string name="title_activity_restaurant">Рестораны</string>
+    <string name="restaurantsAddressTemplate">Адрес ресторана:</string>
+    <string name="restaurantsNameTemplate">Заведение:</string>
+    <string name="averageCheck">Средний чек:</string>
+    <string name="website">Сайт:</string>
+    <string name="phone">Телефон:</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_dish">Блюда</string>
+    <string name="title_activity_news">Новости</string>
+</resources>

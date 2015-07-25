@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background">#fffeff</color>
+    <color name="background_pressed">#cc4fba3b</color>
+    <color name="drawer_item_color">#567f23</color>
+    <color name="list_divider">#567f23</color>
+    <color name="text">#ff000000</color>
+</resources>
