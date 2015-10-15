@@ -2,6 +2,7 @@ package com.osoboebludo.applicationosoboebludo;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
@@ -33,7 +34,8 @@ public class NewsActivity extends Activity {
         tvDescription.setScroller(new Scroller(this));
         tvDescription.setVerticalScrollBarEnabled(true);
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
-        tvDescription.setPadding(0,20,0,20);
+        tvDescription.setPadding(0, 20, 0, 20);
+        tvDescription.setTextColor(Color.parseColor("#ff000000"));
         newsLayout.addView(tvDescription);
     }
 }

@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.text.util.Linkify;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 
@@ -56,6 +58,9 @@ public class RestaurantActivity extends Activity {
 
         TextView tvDescription = new TextView(this);
         tvDescription.setText(restaurant.getDescription());
+        tvDescription.setScroller(new Scroller(this));
+        tvDescription.setVerticalScrollBarEnabled(true);
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
         tvDescription.setTextColor(getResources().getColor(R.color.text));
         restaurantLayout.addView(tvDescription);
     }

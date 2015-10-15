@@ -27,7 +27,7 @@ public class FragmentBitmap {
 
     public void setBitmapSmallPhoto(String smallPhoto) {
         if (smallPhoto != "") {
-            Bitmap bitmapSmallPhoto = Utils.loadBitmap("http://osoboebludo.com/uploads/content/" + smallPhoto);
+            Bitmap bitmapSmallPhoto = Utils.loadBitmapTask("http://osoboebludo.com/uploads/content/" + smallPhoto);
             this.bitmapSmallPhoto = bitmapSmallPhoto;
         } else {
             bitmapSmallPhoto = BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher);
@@ -39,7 +39,7 @@ public class FragmentBitmap {
 
     public void setBitmapLargePhoto(String largePhoto) {
         if (largePhoto != "") {
-            Bitmap bitmapLargePhoto = Utils.loadBitmap("http://osoboebludo.com/uploads/content/" + largePhoto);
+            Bitmap bitmapLargePhoto = Utils.loadBitmapTask("http://osoboebludo.com/uploads/content/" + largePhoto);
             this.bitmapLargePhoto = bitmapLargePhoto;
         } else {
             bitmapLargePhoto = BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher);

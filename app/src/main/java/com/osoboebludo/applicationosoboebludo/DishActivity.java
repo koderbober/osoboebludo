@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 
@@ -35,6 +37,10 @@ public class DishActivity extends Activity {
 
         TextView tvDescription = new TextView(this);
         tvDescription.setText(dish.getDescription());
+        tvDescription.setScroller(new Scroller(this));
+        tvDescription.setVerticalScrollBarEnabled(true);
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
+        tvDescription.setTextColor(getResources().getColor(R.color.text));
         dishLayout.addView(tvDescription);
     }
 }

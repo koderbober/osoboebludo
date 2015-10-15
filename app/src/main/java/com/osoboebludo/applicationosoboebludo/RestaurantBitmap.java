@@ -27,7 +27,7 @@ public class RestaurantBitmap {
 
     public void setBitmapSmallPhoto(String smallPhoto) {
         if (smallPhoto != "") {
-            Bitmap bitmapSmallPhoto = Utils.loadBitmap("http://osoboebludo.com/" + smallPhoto);
+            Bitmap bitmapSmallPhoto = Utils.loadBitmapTask("http://osoboebludo.com/" + smallPhoto);
             this.bitmapSmallPhoto = bitmapSmallPhoto;
         } else {
             bitmapSmallPhoto = BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher);
@@ -40,7 +40,7 @@ public class RestaurantBitmap {
 
     public void setBitmapLargePhoto(String largePhoto) {
         if (largePhoto != "") {
-            Bitmap bitmapLargePhoto = Utils.loadBitmap("http://osoboebludo.com/" + largePhoto);
+            Bitmap bitmapLargePhoto = Utils.loadBitmapTask("http://osoboebludo.com/" + largePhoto);
             this.bitmapLargePhoto = bitmapLargePhoto;
         } else {
             bitmapLargePhoto = BitmapFactory.decodeResource(Resources.getSystem(), R.mipmap.ic_launcher);

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,29 +58,6 @@ public class FragmentNews extends Fragment {
         listView.setAdapter(simpleAdapter);
         registerForContextMenu(listView);
 
-        /*Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                listView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                        if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                            page++;
-                            addData(data);
-                            simpleAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();*/
-
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -113,7 +89,7 @@ public class FragmentNews extends Fragment {
 
     private List<News> getNewsList(int page) {
         String url = "http://osoboebludo.com/api/?notabs&json&content_id=1&page=" + page;
-        String json = Utils.getPageHtml(url);
+        String json = Utils.getPageJson(url);
 
         List<News> newsList = new ArrayList<>();
         try {
