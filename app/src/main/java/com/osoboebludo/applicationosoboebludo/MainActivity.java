@@ -555,7 +555,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class AddDataToRestaurantsSimpleAdapter extends AsyncTask<Void, Void, ArrayList<Map<String, Object>>> {
-
         List<Restaurant> restaurantsList = getRestaurantsList(searchText, pageRestaurants);
 
         @Override
