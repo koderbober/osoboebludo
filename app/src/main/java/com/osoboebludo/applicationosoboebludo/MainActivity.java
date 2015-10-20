@@ -262,7 +262,9 @@ public class MainActivity extends ActionBarActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     pageRestaurants++;
-                    addDataToRestaurantsSimpleAdapter(data, searchText);
+                    AddDataToRestaurantsSimpleAdapter adtrsa = new AddDataToRestaurantsSimpleAdapter();
+                    adtrsa.execute();
+                    //addDataToRestaurantsSimpleAdapter(data, searchText);
                 }
             }
         });
@@ -347,10 +349,8 @@ public class MainActivity extends ActionBarActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     pageRestaurants++;
-                    AddDataToRestaurantsSimpleAdapter adtrsa = new AddDataToRestaurantsSimpleAdapter();
-                    adtrsa.execute();
-                    //addDataToDishesSimpleAdapter(data, searchText);
-                    //simpleAdapter.notifyDataSetChanged();
+                    addDataToDishesSimpleAdapter(data, searchText);
+                    simpleAdapter.notifyDataSetChanged();
                 }
             }
         });
