@@ -157,7 +157,7 @@ public class Utils {
         }
     }
 
-    public static String getPageJson(String url) {
+    public static String getPageJson1(String url) {
         GetPageJson getPageJson = new GetPageJson();
         getPageJson.execute(url);
         String json = "";
@@ -171,7 +171,7 @@ public class Utils {
         return json;
     }
 
-    public static String getPageJson1(String url) {
+    public static String getPageJson(String url) {
         String json = "";
 
         try {

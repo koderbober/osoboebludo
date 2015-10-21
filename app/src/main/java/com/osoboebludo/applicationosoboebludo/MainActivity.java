@@ -554,11 +554,11 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private class AddDataToRestaurantsSimpleAdapter extends AsyncTask<Void, Void, ArrayList<Map<String, Object>>> {
-        List<Restaurant> restaurantsList = getRestaurantsList(searchText, pageRestaurants);
+    private class AddDataToRestaurantsSimpleAdapter extends AsyncTask<Void, Void, Void> {
 
         @Override
-        protected ArrayList<Map<String, Object>> doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
+            List<Restaurant> restaurantsList = getRestaurantsList(searchText, pageRestaurants);
             for (Restaurant each : restaurantsList) {
                 RestaurantBitmap restaurantBitmap = new RestaurantBitmap();
                 restaurantBitmap.setBitmapLargePhoto(each.getLargePhoto());
@@ -580,8 +580,8 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Map<String, Object>> data) {
-            super.onPostExecute(data);
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
             simpleAdapter.notifyDataSetChanged();
         }
     }
