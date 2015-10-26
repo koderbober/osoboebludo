@@ -1,7 +1,10 @@
 package com.osoboebludo.applicationosoboebludo;
 
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements LoaderManager.LoaderCallbacks<List<Restaurant>> {
 
     private DrawerLayout myDrawerLayout;
     private ListView myDrawerList;
@@ -62,6 +65,8 @@ public class MainActivity extends ActionBarActivity {
     final String ATTRIBUTE_RESTAURANT_NAME = "restaurants";
     final String ATTRIBUTE_RESTAURANT_ADDRESS = "restaurants_address";
 
+    final int LOADER_RESTAURANTS_LIST_SEARCHTEXT = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -82,9 +87,6 @@ public class MainActivity extends ActionBarActivity {
         // enabling action bar app icon and behaving it as toggle button
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-
-//        ImageView imageTestView = (ImageView) findViewById(R.id.testView);
-//        imageTestView.setImageBitmap(Utils.loadBitmapTask("http://osoboebludo.com/uploads/content/foto_73_312.jpg"));
 
         myDrawerToggle = new ActionBarDrawerToggle(this, myDrawerLayout,
                 R.string.open_menu,
@@ -216,6 +218,8 @@ public class MainActivity extends ActionBarActivity {
     //Click to RestaurantButton for return to search results
     public void searchRestaurantButtonClick(View view) {
 
+        Loader<List<Restaurant>> loader = getLoaderManager().initLoader(LOADER_RESTAURANTS_LIST_SEARCHTEXT, null, this);
+
         EditText searchEditText = (EditText) findViewById(R.id.searchEditText);
         searchText = searchEditText.getText().toString();
 
@@ -262,9 +266,9 @@ public class MainActivity extends ActionBarActivity {
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                     pageRestaurants++;
-                    AddDataToRestaurantsSimpleAdapter adtrsa = new AddDataToRestaurantsSimpleAdapter();
-                    adtrsa.execute();
-                    //addDataToRestaurantsSimpleAdapter(data, searchText);
+                    //AddDataToRestaurantsSimpleAdapter adtrsa = new AddDataToRestaurantsSimpleAdapter();
+                    //adtrsa.execute();
+                    addDataToRestaurantsSimpleAdapter(data, searchText);
                 }
             }
         });
@@ -280,7 +284,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private ArrayList<Map<String, Object>> addDataToRestaurantsSimpleAdapter(ArrayList<Map<String, Object>> data, String searchText) {
+    private void addDataToRestaurantsSimpleAdapter(ArrayList<Map<String, Object>> data, String searchText) {
         List<Restaurant> restaurantsList = getRestaurantsList(searchText, pageRestaurants);
         for (Restaurant each : restaurantsList) {
             RestaurantBitmap restaurantBitmap = new RestaurantBitmap();
@@ -300,7 +304,6 @@ public class MainActivity extends ActionBarActivity {
             data.add(map);
         }
         simpleAdapter.notifyDataSetChanged();
-        return data;
     }
 
     public void searchDishesButtonClick(View view) {
@@ -544,6 +547,22 @@ public class MainActivity extends ActionBarActivity {
         return dishesList;
     }
 
+    @Override
+    public Loader<List<Restaurant>> onCreateLoader(int id, Bundle args) {
+        Loader<List<Restaurant>> loader = new GetRestaurantsListS(this);
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Restaurant>> loader, List<Restaurant> data) {
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Restaurant>> loader) {
+
+    }
+
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(
@@ -551,6 +570,64 @@ public class MainActivity extends ActionBarActivity {
         ) {
             // display view for selected nav drawer item
             displayView(position);
+        }
+    }
+
+    private class GetRestaurantsListS extends AsyncTaskLoader<List<Restaurant>> {
+
+        public GetRestaurantsListS(Context context) {
+            super(context);
+        }
+
+        @Override
+        public List<Restaurant> loadInBackground() {
+            try {
+                searchText = URLEncoder.encode(searchText, "UTF-8").replaceAll(" ", "+");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String url = "http://osoboebludo.com/api/?notabs&json&content_id=16&keywords=" + searchText;
+            String json = Utils.getPageJson(url);
+
+            List<Restaurant> restaurantsList = new ArrayList<>();
+            try {
+                JSONArray restaurants = new JSONArray(json);
+                for (int i = 0; i < restaurants.length(); i++) {
+                    JSONObject restaurantJSONObject = (JSONObject) restaurants.get(i);
+                    Restaurant restaurant = new Restaurant();
+
+                    restaurant.setTitle(restaurantJSONObject.getString("title"));
+                    restaurant.setIntro(restaurantJSONObject.getString("intro"));
+                    restaurant.setIdRestaurant(restaurantJSONObject.getString("id"));
+                    restaurant.setAddress(restaurantJSONObject.getString("address"));
+                    restaurant.setCity(restaurantJSONObject.getString("city"));
+                    restaurant.setDescription(restaurantJSONObject.getString("description"));
+                    restaurant.setAverageCheck(restaurantJSONObject.getString("average_check"));
+                    restaurant.setPhone(restaurantJSONObject.getString("phone"));
+                    restaurant.setWebsite(restaurantJSONObject.getString("website"));
+                    restaurant.setAddressInstructions(restaurantJSONObject.getString("address_instructions"));
+
+                    if (restaurantJSONObject.isNull("photo_small_path")) {
+                        restaurantJSONObject.put("photo_small_path", " ");
+                    }
+                    restaurant.setSmallPhoto(restaurantJSONObject.getString("photo_small_path"));
+
+                    if (restaurantJSONObject.isNull("photo_large_path")) {
+                        restaurantJSONObject.put("photo_large_path", " ");
+                    }
+                    restaurant.setLargePhoto(restaurantJSONObject.getString("photo_large_path"));
+
+                    restaurantsList.add(restaurant);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return restaurantsList;
+        }
+
+        @Override
+        public void deliverResult(List<Restaurant> restaurantsList) {
+            super.deliverResult(restaurantsList);
         }
     }
 
