@@ -218,7 +218,7 @@ public class MainActivity extends ActionBarActivity implements LoaderManager.Loa
     //Click to RestaurantButton for return to search results
     public void searchRestaurantButtonClick(View view) {
 
-        Loader<List<Restaurant>> loader = getLoaderManager().initLoader(LOADER_RESTAURANTS_LIST_SEARCHTEXT, null, this);
+        //Loader<List<Restaurant>> loader = getLoaderManager().initLoader(LOADER_RESTAURANTS_LIST_SEARCHTEXT, null, this);
 
         EditText searchEditText = (EditText) findViewById(R.id.searchEditText);
         searchText = searchEditText.getText().toString();
