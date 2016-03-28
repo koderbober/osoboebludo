@@ -2,15 +2,14 @@
 <resources>
     <string name="app_name">Особое блюдо</string>
     <string name="action_settings">Настройки</string>
-    <string-array name="views_array">
-        <item>Новости</item>
-        <item>Спецпроекты</item>
-        <item>Рецензии</item>
-        <item>Блоги</item>
-        <item>Календарь</item>
-        <item>О проекте</item>
-        <item>Помощь</item>
-    </string-array>
+    <string name="search">Поиск</string>
+    <string name="news">Новости</string>
+    <string name="projects">Спецпроекты</string>
+    <string name="reviews">Рецензии</string>
+    <string name="blogs">Блоги</string>
+    <string name="calendar">Календарь</string>
+    <string name="about">О проекте</string>
+    <string name="help">Помощь</string>
 
     <string name="menu">Меню</string>
     <string name="news_screen">Новости</string>
@@ -30,8 +29,8 @@
         help@Osoboebludo.ru
     </string>
     <string name="help_screen">Помощь</string>
-    <string name="open_menu">Open</string>
-    <string name="close_menu">Close</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
     <string name="restaurantSearchButton">Поиск ресторанов</string>
     <string name="dishSearchButton">Поиск блюд</string>
     <string name="title_activity_restaurant">Рестораны</string>
@@ -40,7 +39,8 @@
     <string name="averageCheck">Средний чек:</string>
     <string name="website">Сайт:</string>
     <string name="phone">Телефон:</string>
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_dish">Блюда</string>
     <string name="title_activity_news">Новости</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

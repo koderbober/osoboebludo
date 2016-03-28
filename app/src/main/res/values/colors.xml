@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#fffeff</color>
-    <color name="background_pressed">#cc4fba3b</color>
-    <color name="drawer_item_color">#567f23</color>
-    <color name="list_divider">#567f23</color>
-    <color name="text">#ff000000</color>
+    <color name="colorPrimary">#2E7D32</color>
+    <color name="colorPrimaryDark">#1B5E20</color>
+    <color name="colorAccent">#4CAF50</color>
+    <!--<color name="colorPrimary">#138D00</color>
+    <color name="colorPrimaryDark">#1B5E20</color>
+    <color name="colorAccent">#4CAF50</color>-->
 </resources>

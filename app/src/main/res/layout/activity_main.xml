@@ -1,72 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <!-- The main content view -->
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/DrawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_white_1000"
+    android:elevation="7dp">
+
     <LinearLayout
-        android:id="@+id/content_linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            <Button
-                android:id="@+id/restaurantSearchButton"
+            <TextView
+                android:id="@+id/toolbar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/restaurantSearchButton"
-                android:onClick="searchRestaurantButtonClick"
-                android:layout_margin="25dp" />
+                android:textColor="#fff"
+                android:textSize="23sp" />
 
-            <Button
-                android:id="@+id/dishSearchButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/dishSearchButton"
-                android:onClick="searchDishesButtonClick"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="25dp" />
+        </android.support.v7.widget.Toolbar>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerHorizontal="true">
+
+            </FrameLayout>
 
             <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@drawable/toolbar_dropshadow" />
 
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/searchEditText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="Поиск"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_marginBottom="25dp"
-            android:focusable="true"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/testView" />
-
+        </FrameLayout>
     </LinearLayout>
-
-    <!-- The navigation drawer -->
-    <ListView android:id="@+id/left_drawer"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/background"
-        android:choiceMode="singleChoice"
-        android:clickable="false"
-        android:divider="@color/list_divider"
-        android:dividerHeight="2dp"
-        android:listSelector="@drawable/list_selector" />
-
 </android.support.v4.widget.DrawerLayout>
