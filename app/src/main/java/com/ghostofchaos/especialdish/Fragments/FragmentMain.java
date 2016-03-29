@@ -93,7 +93,10 @@ public class FragmentMain extends Fragment {
                 int topRowVerticalPosition =
                         (listView == null || listView.getChildCount() == 0) ?
                                 0 : listView.getChildAt(0).getTop();
+                Log.i("TopRowVerticalPosition", topRowVerticalPosition + "");
                 swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+                Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
+                Log.i("IsRefreshing", isRefreshing.toString());
                 if (loading) {
                     if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                         loading = false;

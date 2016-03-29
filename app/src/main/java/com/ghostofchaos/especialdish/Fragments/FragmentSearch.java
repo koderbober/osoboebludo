@@ -1,15 +1,13 @@
 package com.ghostofchaos.especialdish.Fragments;
 
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,9 +17,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.ghostofchaos.especialdish.FontCache;
-import com.ghostofchaos.especialdish.MyPagerAdapter;
+import com.ghostofchaos.especialdish.Adapter.TabAdapter;
 import com.ghostofchaos.especialdish.R;
 
 /**
@@ -44,20 +41,44 @@ public class FragmentSearch extends Fragment {
 
         setMenu();
 
-        // Initialize the ViewPager and set an adapter
-        ViewPager pager = (ViewPager) root.findViewById(R.id.pager);
-        pager.setAdapter(new MyPagerAdapter(getFragmentManager()));
+        final ViewPager pager = (ViewPager) root.findViewById(R.id.pager);
+        TabAdapter tabAdapter = new TabAdapter(getChildFragmentManager());
+        pager.setAdapter(tabAdapter);
 
-        // Bind the tabs to the ViewPager
-        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) root.findViewById(R.id.tabs);
-        tabs.setShouldExpand(true);
-        tabs.setViewPager(pager);
-        tabs.setTypeface(typeface, 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            tabs.setBackground(getResources().getDrawable(R.color.colorPrimary));
+        TabLayout tabLayout = (TabLayout) root.findViewById(R.id.tab_layout);
+
+        for (int i = 0; i < tabAdapter.getCount(); i++) {
+            TextView t = new TextView(getContext());
+            t.setText(tabAdapter.getPageTitle(i) );
+            t.setTypeface(typeface);
+            t.setTextColor(Color.parseColor("#FFFFFF"));
+            t.setAllCaps(true);
+            t.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+            tabLayout.addTab(tabLayout.newTab()
+                    .setCustomView(t));
+
         }
-        tabs.setTextColor(Color.parseColor("#FFFFFF"));
-        tabs.setIndicatorColor(Color.parseColor("#FFFFFF"));
+
+        pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                pager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+
+        });
 
         return root;
     }

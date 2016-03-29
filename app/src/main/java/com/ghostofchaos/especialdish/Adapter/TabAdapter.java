@@ -1,4 +1,4 @@
-package com.ghostofchaos.especialdish;
+package com.ghostofchaos.especialdish.Adapter;
 
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Created by Ghost on 27.03.2016.
  */
-public class MyPagerAdapter  extends FragmentStatePagerAdapter {
+public class TabAdapter extends FragmentStatePagerAdapter {
 
     private final String[] TITLES = { "Списком", "На карте" };
     FragmentRestaurants fragmentRestaurants;
     FragmentNews fragmentNews;
 
-    public MyPagerAdapter(FragmentManager fm) {
+    public TabAdapter(FragmentManager fm) {
         super(fm);
     }
 

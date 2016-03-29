@@ -1,8 +1,20 @@
 package com.ghostofchaos.especialdish.Fragments;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -12,32 +24,145 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ghostofchaos.especialdish.Adapter.AdapterList;
+import com.ghostofchaos.especialdish.Objects.Model;
 import com.ghostofchaos.especialdish.R;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * Created by Ghost on 28.03.2016.
  */
-public class FragmentRestaurants extends FragmentMain {
+public class FragmentRestaurants extends Fragment {
 
+    StringRequest stringRequest;
+    ArrayList<Model> modelList;
+    String host;
+    AdapterList adapterList;
+    ListView listView;
+    SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar progressBar;
+    View footer;
+    TextView tvToolbar;
+    String toolbarTitle;
+    boolean refresh;
+    int page;
+    boolean loading = true;
+    ArrayList<Model> list;
     String keywords = "кофе";
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_list, null);
+        tvToolbar = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
+        footer = View.inflate(getActivity(), R.layout.pagination_footer, null);
+        footer.setVisibility(View.GONE);
+        modelList = new ArrayList<>();
+        swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary),
+                getResources().getColor(R.color.colorPrimary),
+                getResources().getColor(R.color.colorPrimary),
+                getResources().getColor(R.color.colorPrimary));
+        listView = (ListView) root.findViewById(R.id.list);
+        listView.addFooterView(footer, null, false);
+
+        setPage();
+
+        setToolbar();
+
+        setHost();
+
+        adapterList = new AdapterList(getActivity(), R.layout.item_card, modelList, toolbarTitle);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(adapterList);
+        animationAdapter.setAbsListView(listView);
+        listView.setAdapter(animationAdapter);
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int topRowVerticalPosition =
+                        (listView == null || listView.getChildCount() == 0) ?
+                                0 : listView.getChildAt(0).getTop();
+                Log.i("TopRowVerticalPosition", topRowVerticalPosition + "");
+                swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
+                Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
+                Log.i("IsRefreshing", isRefreshing.toString());
+                if (loading) {
+                    if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
+                        loading = false;
+                        if (page > 1) {
+                            footer.setVisibility(View.VISIBLE);
+                        }
+                        downloadObjects();
+                    }
+                }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+        });
+
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setPage();
+                swipeRefreshLayout.setRefreshing(true);
+                refresh = true;
+                downloadObjects();
+            }
+        });
+
+
+        return root;
+    }
+
+    public void setPage() {
+        page = 1;
+    }
+
     public void setHost() {
-        super.setHost();
         host = "http://osoboebludo.com/api/?notabs&json&content_id=1&page=";
     }
 
-    @Override
     public void setToolbar() {
-        super.setToolbar();
         tvToolbar.setText(Html.fromHtml("<b>" + getResources().getString(R.string.search) + "</b>"));
         toolbarTitle = getResources().getString(R.string.search);
     }
 
-    @Override
+    public void setList(String s) {
+        Gson gson = new Gson();
+        JsonParser parser = new JsonParser();
+        JsonArray jArray = parser.parse(s).getAsJsonArray();
+        Type type = new TypeToken<ArrayList<Model>>() {
+        }.getType();
+        list = gson.fromJson(jArray, type);
+    }
+
     public void downloadObjects() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
         String query = null;
