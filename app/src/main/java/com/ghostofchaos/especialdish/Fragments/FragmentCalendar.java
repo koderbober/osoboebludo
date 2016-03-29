@@ -2,7 +2,7 @@ package com.ghostofchaos.especialdish.Fragments;
 
 import android.text.Html;
 
-import com.ghostofchaos.especialdish.Objects.Model;
+import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 
 import java.text.ParseException;
@@ -35,9 +35,9 @@ public class FragmentCalendar extends FragmentMain {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = null;
-        ArrayList<Model> tempList = new ArrayList<>();
+        ArrayList<FeedModel> tempList = new ArrayList<>();
 
-        for (Model each : list) {
+        for (FeedModel each : list) {
             try {
                 date = format.parse(each.getDate_expired());
             } catch (ParseException e) {
@@ -47,7 +47,7 @@ public class FragmentCalendar extends FragmentMain {
                 tempList.add(each);
             }
         }
-        for (Model each : tempList) {
+        for (FeedModel each : tempList) {
             list.remove(each);
         }
     }

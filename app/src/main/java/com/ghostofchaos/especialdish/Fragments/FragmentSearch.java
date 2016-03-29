@@ -8,12 +8,14 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,6 +30,8 @@ public class FragmentSearch extends Fragment {
 
     ProgressBar progressBar;
     Typeface typeface;
+    FrameLayout frameLayout;
+    View shadow;
     boolean refresh;
     int page;
     private boolean loading = true;
@@ -36,10 +40,15 @@ public class FragmentSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_search, null);
         progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
+        frameLayout = (FrameLayout) getActivity().findViewById(R.id.main_frame);
+        shadow = getActivity().findViewById(R.id.toolbar_shadow);
         String fontName = "fonts/Proxima Nova Light.otf";
         typeface = FontCache.getTypeface(fontName, getContext());
 
         setMenu();
+
+        //frameLayout.removeView(getActivity().findViewById(R.id.toolbar_shadow));
+        shadow.setVisibility(View.INVISIBLE);
 
         final ViewPager pager = (ViewPager) root.findViewById(R.id.pager);
         TabAdapter tabAdapter = new TabAdapter(getChildFragmentManager());
@@ -53,11 +62,10 @@ public class FragmentSearch extends Fragment {
             t.setTypeface(typeface);
             t.setTextColor(Color.parseColor("#FFFFFF"));
             t.setAllCaps(true);
-            t.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            t.setGravity(Gravity.CENTER);
 
             tabLayout.addTab(tabLayout.newTab()
                     .setCustomView(t));
-
         }
 
         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
@@ -117,5 +125,11 @@ public class FragmentSearch extends Fragment {
 
     public void setMenu() {
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        shadow.setVisibility(View.VISIBLE);
     }
 }

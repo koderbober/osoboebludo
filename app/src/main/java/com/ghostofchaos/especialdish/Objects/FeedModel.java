@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Ghost on 07.02.2016.
  */
-public class Model implements Serializable {
+public class FeedModel implements Serializable {
     private String title;
     private String intro;
     private String image;

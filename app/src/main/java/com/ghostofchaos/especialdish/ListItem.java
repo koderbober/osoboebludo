@@ -5,14 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.SpannableString;
-import android.text.SpannedString;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ghostofchaos.especialdish.Objects.Model;
+import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.regex.Pattern;
@@ -24,7 +22,7 @@ public class ListItem extends AppCompatActivity {
 
     ImageView ivImg;
     TextView tvTextTitle, tvTextDescription, tvToolbarTitle;
-    Model model;
+    FeedModel feedModel;
     Typeface typeface;
 
     @Override
@@ -41,8 +39,8 @@ public class ListItem extends AppCompatActivity {
 
         initializationUI();
 
-        model = (Model) getIntent().getSerializableExtra("obj");
-        Log.i("Model", model.toString());
+        feedModel = (FeedModel) getIntent().getSerializableExtra("obj");
+        Log.i("Model", feedModel.toString());
 
         setUI();
 
@@ -68,12 +66,12 @@ public class ListItem extends AppCompatActivity {
 
     private void setUI() {
         Picasso.with(getApplicationContext())
-                .load("http://osoboebludo.com/uploads/content/" + model.getImage())
+                .load("http://osoboebludo.com/uploads/content/" + feedModel.getImage())
                 .resize(MainActivity.width, 0)
                 .into(ivImg);
-        tvTextTitle.setText(Utils.specCharactersHtmlToString(model.getTitle()));
+        tvTextTitle.setText(Utils.specCharactersHtmlToString(feedModel.getTitle()));
 //        tvTextDescription.setText(Utils.specCharactersHtmlToString(model.getDescription()));
-        tvTextDescription.setText(Html.fromHtml(Html.fromHtml(model.getDescription().replaceAll(Pattern.quote("\n"), "<br>")).toString().replaceAll(Pattern.quote("\n"), "<br>")));
+        tvTextDescription.setText(Html.fromHtml(Html.fromHtml(feedModel.getDescription().replaceAll(Pattern.quote("\n"), "<br>")).toString().replaceAll(Pattern.quote("\n"), "<br>")));
         tvToolbarTitle.setText(Html.fromHtml("<b>" + getIntent().getStringExtra("title") + "</b>"));
     }
 

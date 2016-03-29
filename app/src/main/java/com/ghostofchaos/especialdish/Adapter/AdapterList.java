@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.ghostofchaos.especialdish.FontCache;
 import com.ghostofchaos.especialdish.ListItem;
 import com.ghostofchaos.especialdish.MainActivity;
-import com.ghostofchaos.especialdish.Objects.Model;
+import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 import com.ghostofchaos.especialdish.Utils;
 import com.squareup.picasso.Picasso;
@@ -30,10 +30,10 @@ public class AdapterList extends ArrayAdapter {
     Typeface typeface;
     Context c;
     int res;
-    ArrayList<Model> objs;
+    ArrayList<FeedModel> objs;
     String toolbarTitle;
 
-    public AdapterList(Context context, int resource, ArrayList<Model> objs, String toolbarTitle) {
+    public AdapterList(Context context, int resource, ArrayList<FeedModel> objs, String toolbarTitle) {
         super(context, resource, objs);
         this.objs = objs;
         this.res = resource;

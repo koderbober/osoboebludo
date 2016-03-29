@@ -24,7 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ghostofchaos.especialdish.Adapter.AdapterList;
-import com.ghostofchaos.especialdish.Objects.Model;
+import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -41,7 +41,7 @@ import java.util.ArrayList;
 public class FragmentMain extends Fragment {
 
     StringRequest stringRequest;
-    ArrayList<Model> modelList;
+    ArrayList<FeedModel> feedModelList;
     String host;
     AdapterList adapterList;
     ListView listView;
@@ -53,7 +53,7 @@ public class FragmentMain extends Fragment {
     boolean refresh;
     int page;
     boolean loading = true;
-    ArrayList<Model> list;
+    ArrayList<FeedModel> list;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class FragmentMain extends Fragment {
         progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
         footer = View.inflate(getActivity(), R.layout.pagination_footer, null);
         footer.setVisibility(View.GONE);
-        modelList = new ArrayList<>();
+        feedModelList = new ArrayList<>();
         swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary),
                 getResources().getColor(R.color.colorPrimary),
@@ -77,7 +77,7 @@ public class FragmentMain extends Fragment {
 
         setHost();
 
-        adapterList = new AdapterList(getActivity(), R.layout.item_card, modelList, toolbarTitle);
+        adapterList = new AdapterList(getActivity(), R.layout.item_card, feedModelList, toolbarTitle);
         AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(adapterList);
         animationAdapter.setAbsListView(listView);
         listView.setAdapter(animationAdapter);
@@ -175,7 +175,7 @@ public class FragmentMain extends Fragment {
                     @Override
                     public void onResponse(String s) {
                         if (refresh) {
-                            modelList.clear();
+                            feedModelList.clear();
                         }
                         if (s.equals("")) {
                             listView.removeFooterView(footer);
@@ -184,8 +184,8 @@ public class FragmentMain extends Fragment {
                             Log.d("stringRequest", s);
                             Log.d("address", host + page);
                             setList(s);
-                            modelList.addAll(list);
-                            Log.d("list", modelList.size() + "");
+                            feedModelList.addAll(list);
+                            Log.d("list", feedModelList.size() + "");
                             adapterList.notifyDataSetChanged();
                             Log.d("listadapter", adapterList.getCount() + "");
                             swipeRefreshLayout.setRefreshing(false);
@@ -220,7 +220,7 @@ public class FragmentMain extends Fragment {
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonArray jArray = parser.parse(s).getAsJsonArray();
-        Type type = new TypeToken<ArrayList<Model>>() {
+        Type type = new TypeToken<ArrayList<FeedModel>>() {
         }.getType();
         list = gson.fromJson(jArray, type);
     }
