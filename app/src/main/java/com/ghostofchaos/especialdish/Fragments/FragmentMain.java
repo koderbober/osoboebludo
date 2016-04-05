@@ -23,7 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ghostofchaos.especialdish.Adapter.AdapterList;
+import com.ghostofchaos.especialdish.Adapter.FeedListAdapter;
 import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
@@ -43,7 +43,7 @@ public class FragmentMain extends Fragment {
     StringRequest stringRequest;
     ArrayList<FeedModel> feedModelList;
     String host;
-    AdapterList adapterList;
+    FeedListAdapter feedListAdapter;
     ListView listView;
     SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
@@ -77,8 +77,8 @@ public class FragmentMain extends Fragment {
 
         setHost();
 
-        adapterList = new AdapterList(getActivity(), R.layout.item_card, feedModelList, toolbarTitle);
-        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(adapterList);
+        feedListAdapter = new FeedListAdapter(getActivity(), R.layout.feed_item_card, feedModelList, toolbarTitle);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(feedListAdapter);
         animationAdapter.setAbsListView(listView);
         listView.setAdapter(animationAdapter);
 
@@ -93,10 +93,8 @@ public class FragmentMain extends Fragment {
                 int topRowVerticalPosition =
                         (listView == null || listView.getChildCount() == 0) ?
                                 0 : listView.getChildAt(0).getTop();
-                Log.i("TopRowVerticalPosition", topRowVerticalPosition + "");
                 swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
                 Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
-                Log.i("IsRefreshing", isRefreshing.toString());
                 if (loading) {
                     if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                         loading = false;
@@ -186,8 +184,8 @@ public class FragmentMain extends Fragment {
                             setList(s);
                             feedModelList.addAll(list);
                             Log.d("list", feedModelList.size() + "");
-                            adapterList.notifyDataSetChanged();
-                            Log.d("listadapter", adapterList.getCount() + "");
+                            feedListAdapter.notifyDataSetChanged();
+                            Log.d("listadapter", feedListAdapter.getCount() + "");
                             swipeRefreshLayout.setRefreshing(false);
                             swipeRefreshLayout.setEnabled(false);
                             loading = true;

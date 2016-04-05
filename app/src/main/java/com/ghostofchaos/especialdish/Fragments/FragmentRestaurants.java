@@ -23,8 +23,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ghostofchaos.especialdish.Adapter.AdapterList;
+import com.ghostofchaos.especialdish.Adapter.FeedListAdapter;
+import com.ghostofchaos.especialdish.Adapter.SearchRestaurantsListAdapter;
 import com.ghostofchaos.especialdish.Objects.FeedModel;
+import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -43,9 +45,9 @@ import java.util.ArrayList;
 public class FragmentRestaurants extends Fragment {
 
     StringRequest stringRequest;
-    ArrayList<FeedModel> feedModelList;
+    ArrayList<RestaurantsModel> restaurantsModelList;
     String host;
-    AdapterList adapterList;
+    SearchRestaurantsListAdapter searchRestaurantsListAdapter;
     ListView listView;
     SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
@@ -55,7 +57,7 @@ public class FragmentRestaurants extends Fragment {
     boolean refresh;
     int page;
     boolean loading = true;
-    ArrayList<FeedModel> list;
+    ArrayList<RestaurantsModel> list;
     String keywords = "кофе";
 
     @Override
@@ -65,7 +67,7 @@ public class FragmentRestaurants extends Fragment {
         progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
         footer = View.inflate(getActivity(), R.layout.pagination_footer, null);
         footer.setVisibility(View.GONE);
-        feedModelList = new ArrayList<>();
+        restaurantsModelList = new ArrayList<>();
         swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorPrimary),
                 getResources().getColor(R.color.colorPrimary),
@@ -80,8 +82,8 @@ public class FragmentRestaurants extends Fragment {
 
         setHost();
 
-        adapterList = new AdapterList(getActivity(), R.layout.item_card, feedModelList, toolbarTitle);
-        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(adapterList);
+        searchRestaurantsListAdapter = new SearchRestaurantsListAdapter(getActivity(), R.layout.restaurants_item, restaurantsModelList, toolbarTitle);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(searchRestaurantsListAdapter);
         animationAdapter.setAbsListView(listView);
         listView.setAdapter(animationAdapter);
 
@@ -96,10 +98,8 @@ public class FragmentRestaurants extends Fragment {
                 int topRowVerticalPosition =
                         (listView == null || listView.getChildCount() == 0) ?
                                 0 : listView.getChildAt(0).getTop();
-                Log.i("TopRowVerticalPosition", topRowVerticalPosition + "");
                 swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
                 Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
-                Log.i("IsRefreshing", isRefreshing.toString());
                 if (loading) {
                     if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
                         loading = false;
@@ -145,7 +145,7 @@ public class FragmentRestaurants extends Fragment {
     }
 
     public void setHost() {
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=1&page=";
+        host = "http://osoboebludo.com/api/?notabs&json&content_id=16&page=";
     }
 
     public void setToolbar() {
@@ -157,7 +157,7 @@ public class FragmentRestaurants extends Fragment {
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonArray jArray = parser.parse(s).getAsJsonArray();
-        Type type = new TypeToken<ArrayList<FeedModel>>() {
+        Type type = new TypeToken<ArrayList<RestaurantsModel>>() {
         }.getType();
         list = gson.fromJson(jArray, type);
     }
@@ -170,12 +170,12 @@ public class FragmentRestaurants extends Fragment {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        stringRequest = new StringRequest(Request.Method.GET, host + page + "&keywords=" + query,
+        stringRequest = new StringRequest(Request.Method.GET, host + page, //+ "&keywords=" + query,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
                         if (refresh) {
-                            feedModelList.clear();
+                            restaurantsModelList.clear();
                         }
                         if (s.equals("")) {
                             listView.removeFooterView(footer);
@@ -184,10 +184,10 @@ public class FragmentRestaurants extends Fragment {
                             Log.d("stringRequest", s);
                             Log.d("address", host + page);
                             setList(s);
-                            feedModelList.addAll(list);
-                            Log.d("list", feedModelList.size() + "");
-                            adapterList.notifyDataSetChanged();
-                            Log.d("listadapter", adapterList.getCount() + "");
+                            restaurantsModelList.addAll(list);
+                            Log.d("list", restaurantsModelList.size() + "");
+                            searchRestaurantsListAdapter.notifyDataSetChanged();
+                            Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
                             swipeRefreshLayout.setRefreshing(false);
                             swipeRefreshLayout.setEnabled(false);
                             loading = true;

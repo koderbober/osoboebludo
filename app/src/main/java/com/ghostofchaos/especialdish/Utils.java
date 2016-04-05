@@ -8,16 +8,17 @@ import java.util.regex.Pattern;
 public class Utils {
 
     public static String specCharactersHtmlToString(String html) {
-        String hex;
-        hex = html.replaceAll(Pattern.quote("&amp;ndash;"), "\u2013")
-        .replaceAll(Pattern.quote("&amp;quot;"), "\"")
-        .replaceAll(Pattern.quote("&amp;laquo;"), "«")
-        .replaceAll(Pattern.quote("&amp;raquo;"), "»")
-        .replaceAll(Pattern.quote("&amp;nbsp;"), " ")
-        .replaceAll(Pattern.quote("\\&quot;"), "\"")
-        //.replaceAll(Pattern.quote("&amp;"), "ñ")
-        .replaceAll(Pattern.quote("&amp;"), "&");
-
+        String hex = null;
+        if (html != null) {
+            hex = html.replaceAll(Pattern.quote("&amp;ndash;"), "\u2013")
+                    .replaceAll(Pattern.quote("&amp;quot;"), "\"")
+                    .replaceAll(Pattern.quote("&amp;laquo;"), "«")
+                    .replaceAll(Pattern.quote("&amp;raquo;"), "»")
+                    .replaceAll(Pattern.quote("&amp;nbsp;"), " ")
+                    .replaceAll(Pattern.quote("\\&quot;"), "\"")
+                            //.replaceAll(Pattern.quote("&amp;"), "ñ")
+                    .replaceAll(Pattern.quote("&amp;"), "&");
+        }
         return hex;
     }
 }

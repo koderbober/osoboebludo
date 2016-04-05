@@ -132,4 +132,10 @@ public class FragmentSearch extends Fragment {
         super.onStop();
         shadow.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        shadow.setVisibility(View.INVISIBLE);
+    }
 }

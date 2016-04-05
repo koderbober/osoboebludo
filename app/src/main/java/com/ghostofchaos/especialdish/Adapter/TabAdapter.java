@@ -8,6 +8,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.ghostofchaos.especialdish.Fragments.FragmentMap;
 import com.ghostofchaos.especialdish.Fragments.FragmentNews;
 import com.ghostofchaos.especialdish.Fragments.FragmentRestaurants;
 
@@ -20,7 +21,7 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
     private final String[] TITLES = { "Списком", "На карте" };
     FragmentRestaurants fragmentRestaurants;
-    FragmentNews fragmentNews;
+    FragmentMap fragmentMap;
 
     public TabAdapter(FragmentManager fm) {
         super(fm);
@@ -40,10 +41,10 @@ public class TabAdapter extends FragmentStatePagerAdapter {
                 }
                 return fragmentRestaurants;
             case 1:
-                if (fragmentNews == null) {
-                    fragmentNews = new FragmentNews();
+                if (fragmentMap == null) {
+                    fragmentMap = new FragmentMap();
                 }
-                return fragmentNews;
+                return fragmentMap;
         }
             return null;
     }
