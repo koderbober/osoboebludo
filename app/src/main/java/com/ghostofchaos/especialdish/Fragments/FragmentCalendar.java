@@ -55,6 +55,6 @@ public class FragmentCalendar extends FragmentMain {
     @Override
     public void setPage() {
         super.setPage();
-        page = 18;
+        page = 1;
     }
 }

@@ -28,6 +28,8 @@ import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
@@ -217,7 +219,10 @@ public class FragmentMain extends Fragment {
     public void setList(String s) {
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
-        JsonArray jArray = parser.parse(s).getAsJsonArray();
+        JsonObject jObject = parser.parse(s).getAsJsonObject();
+        JsonElement jElement = jObject.get("items");
+        JsonArray jArray = jElement.getAsJsonArray();
+        //JsonArray jArray = parser.parse(s).getAsJsonArray();
         Type type = new TypeToken<ArrayList<FeedModel>>() {
         }.getType();
         list = gson.fromJson(jArray, type);
