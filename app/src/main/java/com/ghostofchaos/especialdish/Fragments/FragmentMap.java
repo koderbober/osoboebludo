@@ -1,6 +1,9 @@
 package com.ghostofchaos.especialdish.Fragments;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,8 +26,11 @@ public class FragmentMap extends Fragment {
 
     static final LatLng HAMBURG = new LatLng(53.558, 9.927);
     static final LatLng KIEL = new LatLng(53.551, 9.993);
+    static final int LOCATION_REFRESH_TIME = 10;
+    static final int LOCATION_REFRESH_DISTANCE = 10;
     private MapView mapView;
     private GoogleMap map;
+    private LocationManager mLocationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,11 @@ public class FragmentMap extends Fragment {
         // Updates the location and zoom of the MapView
         map.setMyLocationEnabled(true);
         Location myLocation = map.getMyLocation();
+
+        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                LOCATION_REFRESH_DISTANCE, mLocationListener);
 
         if (map != null) {
             map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
@@ -70,6 +81,14 @@ public class FragmentMap extends Fragment {
                     .title("Kiel")
                     .snippet("Kiel is cool"));*/
 
+            Location lastKnownLocationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocationGPS != null) {
+                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocationGPS.getLatitude(), lastKnownLocationGPS.getLongitude())));
+            } else {
+                Location loc =  mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc.getLatitude(), loc.getLongitude())));
+            }
+
             if (myLocation != null) {
                 double dLatitude = myLocation.getLatitude();
                 double dLongitude = myLocation.getLongitude();
@@ -82,6 +101,29 @@ public class FragmentMap extends Fragment {
         }
         return root;
     }
+
+    private final LocationListener mLocationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
     @Override
     public void onResume() {
