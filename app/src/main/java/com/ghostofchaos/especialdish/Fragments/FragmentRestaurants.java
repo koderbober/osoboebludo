@@ -1,7 +1,9 @@
 package com.ghostofchaos.especialdish.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
@@ -23,9 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.ghostofchaos.especialdish.Adapter.FeedListAdapter;
 import com.ghostofchaos.especialdish.Adapter.SearchRestaurantsListAdapter;
-import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
@@ -46,21 +46,23 @@ import java.util.ArrayList;
  */
 public class FragmentRestaurants extends Fragment {
 
-    StringRequest stringRequest;
-    ArrayList<RestaurantsModel> restaurantsModelList;
-    String host;
-    SearchRestaurantsListAdapter searchRestaurantsListAdapter;
-    ListView listView;
-    SwipeRefreshLayout swipeRefreshLayout;
-    ProgressBar progressBar;
-    View footer;
+    static StringRequest stringRequest;
+    static ArrayList<RestaurantsModel> restaurantsModelList;
+    static String host;
+    static SearchRestaurantsListAdapter searchRestaurantsListAdapter;
+    static ListView listView;
+    static SwipeRefreshLayout swipeRefreshLayout;
+    static ProgressBar progressBar;
+    static View footer;
     TextView tvToolbar;
     String toolbarTitle;
-    boolean refresh;
-    int page;
-    boolean loading = true;
-    ArrayList<RestaurantsModel> list;
-    String keywords = "кофе";
+    static public boolean isMap = false;
+    static boolean refresh;
+    static int page;
+    static boolean loading = true;
+    static ArrayList<RestaurantsModel> list;
+    static String keywords = "";
+    static int perPage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -108,7 +110,7 @@ public class FragmentRestaurants extends Fragment {
                         if (page > 1) {
                             footer.setVisibility(View.VISIBLE);
                         }
-                        downloadObjects();
+                        downloadObjects(getContext());
                     }
                 }
             }
@@ -134,7 +136,7 @@ public class FragmentRestaurants extends Fragment {
                 setPage();
                 swipeRefreshLayout.setRefreshing(true);
                 refresh = true;
-                downloadObjects();
+                downloadObjects(getContext());
             }
         });
 
@@ -146,7 +148,7 @@ public class FragmentRestaurants extends Fragment {
         page = 1;
     }
 
-    public void setHost() {
+    public static void setHost() {
         host = "http://osoboebludo.com/api/?notabs&json&content_id=16&page=";
     }
 
@@ -155,7 +157,7 @@ public class FragmentRestaurants extends Fragment {
         toolbarTitle = getResources().getString(R.string.search);
     }
 
-    public void setList(String s) {
+    public static void setList(String s) {
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonObject jObject = parser.parse(s).getAsJsonObject();
@@ -167,15 +169,21 @@ public class FragmentRestaurants extends Fragment {
         list = gson.fromJson(jArray, type);
     }
 
-    public void downloadObjects() {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
+    public static void setPerPage(int count) {
+        perPage = count;
+    }
+
+    public static void downloadObjects(final Context context) {
+        //Activity activity = (Activity) listView.getContext();
+        setPerPage(10);
+        RequestQueue queue = Volley.newRequestQueue(context);
         String query = null;
         try {
             query = URLEncoder.encode(keywords, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        stringRequest = new StringRequest(Request.Method.GET, host + page, //+ "&keywords=" + query,
+        stringRequest = new StringRequest(Request.Method.GET, host + page + "&keywords=" + query + "&per_page=" + perPage,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
@@ -200,6 +208,9 @@ public class FragmentRestaurants extends Fragment {
                             progressBar.setVisibility(View.GONE);
                             footer.setVisibility(View.GONE);
                             refresh = false;
+                            if (isMap) {
+                                FragmentMap.setMarkers();
+                            }
                         }
                     }
                 },
@@ -207,7 +218,7 @@ public class FragmentRestaurants extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Log.d("news", volleyError.toString());
-                        Toast.makeText(getActivity(), "При загрузке данных произошла ошибка", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "При загрузке данных произошла ошибка", Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         swipeRefreshLayout.setEnabled(false);
                         loading = true;

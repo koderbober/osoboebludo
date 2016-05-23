@@ -38,6 +38,8 @@ import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,21 +54,12 @@ import java.util.ArrayList;
 public class FragmentSearch extends Fragment {
 
     ArrayList<RestaurantsModel> restaurantsModelList;
-    SearchRestaurantsListAdapter searchRestaurantsListAdapter;
-    ArrayList<RestaurantsModel> list;
     ListView listView;
-    SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
     Typeface typeface;
     FrameLayout frameLayout;
     View shadow;
-    boolean refresh;
-    int page;
     String host;
-    View footer;
-
-    private boolean loading = true;
-    private StringRequest stringRequest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,10 +69,13 @@ public class FragmentSearch extends Fragment {
         shadow = getActivity().findViewById(R.id.toolbar_shadow);
         String fontName = "fonts/Proxima Nova Light.otf";
         typeface = FontCache.getTypeface(fontName, getContext());
+        restaurantsModelList = new ArrayList<>();
+        listView = (ListView) root.findViewById(R.id.list);
 
         setMenu();
 
-        //frameLayout.removeView(getActivity().findViewById(R.id.toolbar_shadow));
+        setHost();
+
         shadow.setVisibility(View.INVISIBLE);
 
         final ViewPager pager = (ViewPager) root.findViewById(R.id.pager);
@@ -123,9 +119,12 @@ public class FragmentSearch extends Fragment {
         return root;
     }
 
+    private void setHost() {
+        host = "http://osoboebludo.com/api/?notabs&json&content_id=16&page=";
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //inflater.inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -140,12 +139,31 @@ public class FragmentSearch extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                getObjects(query);
+                FragmentRestaurants.page = 1;
+                FragmentRestaurants.refresh = true;
+                FragmentRestaurants.keywords = query;
+                FragmentRestaurants.restaurantsModelList.clear();
+                FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
+                FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
+                FragmentRestaurants.downloadObjects(getContext());
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                FragmentRestaurants.page = 1;
+                FragmentRestaurants.refresh = true;
+                FragmentRestaurants.keywords = "";
+                FragmentRestaurants.restaurantsModelList.clear();
+                FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
+                FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
+                FragmentRestaurants.downloadObjects(getContext());
                 return false;
             }
         });
@@ -156,69 +174,6 @@ public class FragmentSearch extends Fragment {
 
         super.onPrepareOptionsMenu(menu);
     }
-
-    private void getObjects(String query) {
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        try {
-            query = URLEncoder.encode(query, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        stringRequest = new StringRequest(Request.Method.GET, host + page, //+ "&keywords=" + query,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        if (refresh) {
-                            restaurantsModelList.clear();
-                        }
-                        if (s.equals("")) {
-                            listView.removeFooterView(footer);
-                            loading = false;
-                        } else {
-                            Log.d("stringRequest", s);
-                            Log.d("address", host + page);
-                            setList(s);
-                            restaurantsModelList.addAll(list);
-                            Log.d("list", restaurantsModelList.size() + "");
-                            searchRestaurantsListAdapter.notifyDataSetChanged();
-                            Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
-                            swipeRefreshLayout.setRefreshing(false);
-                            swipeRefreshLayout.setEnabled(false);
-                            loading = true;
-                            page++;
-                            progressBar.setVisibility(View.GONE);
-                            footer.setVisibility(View.GONE);
-                            refresh = false;
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("news", volleyError.toString());
-                        Toast.makeText(getActivity(), "При загрузке данных произошла ошибка", Toast.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                        swipeRefreshLayout.setEnabled(false);
-                        loading = true;
-                    }
-                }) {
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(stringRequest);
-    }
-
-    public void setList(String s) {
-        Gson gson = new Gson();
-        JsonParser parser = new JsonParser();
-        JsonArray jArray = parser.parse(s).getAsJsonArray();
-        Type type = new TypeToken<ArrayList<RestaurantsModel>>() {
-        }.getType();
-        list = gson.fromJson(jArray, type);
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -239,11 +194,23 @@ public class FragmentSearch extends Fragment {
     public void onStop() {
         super.onStop();
         shadow.setVisibility(View.VISIBLE);
+
+        FragmentRestaurants.page = 1;
+        FragmentRestaurants.refresh = true;
+        FragmentRestaurants.keywords = "";
+        if (FragmentRestaurants.restaurantsModelList != null) {
+            FragmentRestaurants.restaurantsModelList.clear();
+            FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
+            FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         shadow.setVisibility(View.INVISIBLE);
+
+        FragmentRestaurants.setHost();
+        FragmentRestaurants.downloadObjects(getContext());
     }
 }

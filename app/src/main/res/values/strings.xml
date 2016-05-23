@@ -3,6 +3,9 @@
     <string name="app_name">Особое блюдо</string>
     <string name="action_settings">Настройки</string>
     <string name="search">Поиск</string>
+    <string name="search_restaurants">Поиск ресторанов</string>
+    <string name="search_dishes">Поиск блюд</string>
+    <string name="feed">Ленты</string>
     <string name="news">Новости</string>
     <string name="projects">Спецпроекты</string>
     <string name="reviews">Рецензии</string>

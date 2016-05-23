@@ -24,7 +24,10 @@ import com.ghostofchaos.especialdish.Fragments.FragmentReviews;
 import com.ghostofchaos.especialdish.Fragments.FragmentSearch;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 public class MainActivity extends AppCompatActivity {
@@ -100,12 +103,15 @@ public class MainActivity extends AppCompatActivity {
                 .withHasStableIds(true)
                 .withToolbar(toolbar)
                 .addDrawerItems(
-                        new PrimaryDrawerItem().withName(R.string.search).withIdentifier(1).withTypeface(typeface),
+                        new SectionDrawerItem().withName(R.string.search).withDivider(false).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.search_restaurants).withIdentifier(1).withTypeface(typeface),
+                        new SectionDrawerItem().withName(R.string.feed).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.news).withIdentifier(2).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.projects).withIdentifier(3).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.reviews).withIdentifier(4).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.blogs).withIdentifier(5).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.calendar).withIdentifier(6).withTypeface(typeface),
+                        new DividerDrawerItem(),
                         new PrimaryDrawerItem().withName(R.string.about).withIdentifier(7).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.help).withIdentifier(8).withTypeface(typeface)
                 )
