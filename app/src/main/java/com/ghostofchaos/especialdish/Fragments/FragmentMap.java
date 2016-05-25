@@ -1,29 +1,17 @@
 package com.ghostofchaos.especialdish.Fragments;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,11 +19,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
 
 /**
  * Created by Ghost on 30.03.2016.
@@ -45,7 +28,7 @@ public class FragmentMap extends Fragment {
     static final int LOCATION_REFRESH_TIME = 10;
     static final int LOCATION_REFRESH_DISTANCE = 10;
     private MapView mapView;
-    private static GoogleMap map;
+    public static GoogleMap map;
     private LocationManager mLocationManager;
     private static Context context;
 
@@ -92,25 +75,22 @@ public class FragmentMap extends Fragment {
                 }
             });
 
-            FragmentRestaurants.isMap = true;
-            FragmentRestaurants.setPerPage(100);
-            FragmentRestaurants.setHost();
-            FragmentRestaurants.downloadObjects(getContext());
+            /*DownloadModels.getInstance();
+            DownloadModels.setPerPage(100);
+            DownloadModels.setPage(0);
+            DownloadModels.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
+            DownloadModels.downloadObjects(getActivity(), map);*/
 
-/*
-            Marker hamburg = map.addMarker(new MarkerOptions()
-                    .position(HAMBURG)
-                    .title("Hamburg"));
-            Marker kiel = map.addMarker(new MarkerOptions()
+    /*      Marker kiel = map.addMarker(new MarkerOptions()
                     .position(KIEL)
                     .title("Kiel")
-                    .snippet("Kiel is cool"));*/
+                    .snippet("Kiel is cool");*/
 
             Location lastKnownLocationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnownLocationGPS != null) {
                 map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocationGPS.getLatitude(), lastKnownLocationGPS.getLongitude())));
             } else {
-                Location loc =  mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                Location loc = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                 map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc.getLatitude(), loc.getLongitude())));
             }
 
@@ -125,43 +105,6 @@ public class FragmentMap extends Fragment {
             map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
         }
         return root;
-    }
-
-    public static void setMarkers() {
-        for (RestaurantsModel model : FragmentRestaurants.list) {
-            LatLng loc = getLocationFromAddress(context, model.getAddress());
-            if (loc != null) {
-                Marker marker = map.addMarker(new MarkerOptions()
-                        .position(loc)
-                        .title(model.getTitle()));
-            }
-        }
-    }
-
-
-    public static LatLng getLocationFromAddress(Context context, String strAddress) {
-
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-
-        try {
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
-                return null;
-            }
-            Address location = address.get(0);
-            location.getLatitude();
-            location.getLongitude();
-
-            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
-
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-        }
-
-        return p1;
     }
 
     private final LocationListener mLocationListener = new LocationListener() {

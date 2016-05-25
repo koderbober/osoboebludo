@@ -32,8 +32,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ghostofchaos.especialdish.Adapter.SearchRestaurantsListAdapter;
+import com.ghostofchaos.especialdish.DownloadObjectsManager;
 import com.ghostofchaos.especialdish.FontCache;
 import com.ghostofchaos.especialdish.Adapter.TabAdapter;
+import com.ghostofchaos.especialdish.MainActivity;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
@@ -53,7 +55,7 @@ import java.util.ArrayList;
  */
 public class FragmentSearch extends Fragment {
 
-    ArrayList<RestaurantsModel> restaurantsModelList;
+    ArrayList<Object> restaurantsModelList;
     ListView listView;
     ProgressBar progressBar;
     Typeface typeface;
@@ -139,13 +141,15 @@ public class FragmentSearch extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                FragmentRestaurants.page = 1;
-                FragmentRestaurants.refresh = true;
-                FragmentRestaurants.keywords = query;
-                FragmentRestaurants.restaurantsModelList.clear();
-                FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
-                FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
-                FragmentRestaurants.downloadObjects(getContext());
+                DownloadObjectsManager.getInstance();
+                DownloadObjectsManager.setModelArrayList(restaurantsModelList);
+                DownloadObjectsManager.setProgressBar(progressBar);
+                DownloadObjectsManager.setKeywords(query);
+                DownloadObjectsManager.setListView(listView);
+                MainActivity.refresh = true;
+                DownloadObjectsManager.setPage(0);
+                DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map);
                 return false;
             }
 
@@ -157,13 +161,15 @@ public class FragmentSearch extends Fragment {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                FragmentRestaurants.page = 1;
-                FragmentRestaurants.refresh = true;
-                FragmentRestaurants.keywords = "";
-                FragmentRestaurants.restaurantsModelList.clear();
-                FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
-                FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
-                FragmentRestaurants.downloadObjects(getContext());
+                DownloadObjectsManager.getInstance();
+                DownloadObjectsManager.setModelArrayList(restaurantsModelList);
+                DownloadObjectsManager.setProgressBar(progressBar);
+                DownloadObjectsManager.setKeywords("");
+                DownloadObjectsManager.setListView(listView);
+                MainActivity.refresh = true;
+                DownloadObjectsManager.setPage(0);
+                DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map);
                 return false;
             }
         });
@@ -195,14 +201,14 @@ public class FragmentSearch extends Fragment {
         super.onStop();
         shadow.setVisibility(View.VISIBLE);
 
-        FragmentRestaurants.page = 1;
+        /*FragmentRestaurants.page = 1;
         FragmentRestaurants.refresh = true;
         FragmentRestaurants.keywords = "";
         if (FragmentRestaurants.restaurantsModelList != null) {
             FragmentRestaurants.restaurantsModelList.clear();
             FragmentRestaurants.searchRestaurantsListAdapter.notifyDataSetChanged();
             FragmentRestaurants.progressBar.setVisibility(View.VISIBLE);
-        }
+        }*/
     }
 
     @Override
@@ -210,7 +216,7 @@ public class FragmentSearch extends Fragment {
         super.onResume();
         shadow.setVisibility(View.INVISIBLE);
 
-        FragmentRestaurants.setHost();
-        FragmentRestaurants.downloadObjects(getContext());
+        /*FragmentRestaurants.setHost();
+        FragmentRestaurants.downloadObjects(getContext());*/
     }
 }

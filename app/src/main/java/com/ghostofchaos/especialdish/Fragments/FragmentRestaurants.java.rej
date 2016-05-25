@@ -1,0 +1,9 @@
+diff a/app/src/main/java/com/ghostofchaos/especialdish/Fragments/FragmentRestaurants.java b/app/src/main/java/com/ghostofchaos/especialdish/Fragments/FragmentRestaurants.java	(rejected hunks)
+@@ -210,6 +210,7 @@
+                             refresh = false;
+                             if (isMap) {
+                                 FragmentMap.setMarkers();
++                            }
+                         }
+                     }
+                 },

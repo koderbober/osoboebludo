@@ -3,10 +3,8 @@ package com.ghostofchaos.especialdish.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,16 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.ghostofchaos.especialdish.Adapter.SearchRestaurantsListAdapter;
+import com.ghostofchaos.especialdish.DownloadObjectsManager;
+import com.ghostofchaos.especialdish.MainActivity;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
@@ -36,9 +29,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +38,7 @@ import java.util.ArrayList;
 public class FragmentRestaurants extends Fragment {
 
     static StringRequest stringRequest;
-    static ArrayList<RestaurantsModel> restaurantsModelList;
+    static ArrayList<Object> restaurantsModelList;
     static String host;
     static SearchRestaurantsListAdapter searchRestaurantsListAdapter;
     static ListView listView;
@@ -56,13 +47,12 @@ public class FragmentRestaurants extends Fragment {
     static View footer;
     TextView tvToolbar;
     String toolbarTitle;
-    static public boolean isMap = false;
-    static boolean refresh;
+    //static boolean refresh;
+    //static boolean loading = true;
     static int page;
-    static boolean loading = true;
-    static ArrayList<RestaurantsModel> list;
-    static String keywords = "";
     static int perPage;
+    static ArrayList<Object> list;
+    static String keywords = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,10 +76,13 @@ public class FragmentRestaurants extends Fragment {
 
         setHost();
 
+
         searchRestaurantsListAdapter = new SearchRestaurantsListAdapter(getActivity(), R.layout.restaurants_item, restaurantsModelList, toolbarTitle);
         AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(searchRestaurantsListAdapter);
         animationAdapter.setAbsListView(listView);
         listView.setAdapter(animationAdapter);
+
+        setManager();
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -104,13 +97,13 @@ public class FragmentRestaurants extends Fragment {
                                 0 : listView.getChildAt(0).getTop();
                 swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
                 Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
-                if (loading) {
+                if (MainActivity.loading) {
                     if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                        loading = false;
+                        MainActivity.loading = false;
                         if (page > 1) {
                             footer.setVisibility(View.VISIBLE);
                         }
-                        downloadObjects(getContext());
+                        downloadObjects();
                     }
                 }
             }
@@ -135,11 +128,10 @@ public class FragmentRestaurants extends Fragment {
             public void onRefresh() {
                 setPage();
                 swipeRefreshLayout.setRefreshing(true);
-                refresh = true;
-                downloadObjects(getContext());
+                MainActivity.refresh = true;
+                downloadObjects();
             }
         });
-
 
         return root;
     }
@@ -148,7 +140,7 @@ public class FragmentRestaurants extends Fragment {
         page = 1;
     }
 
-    public static void setHost() {
+    public void setHost() {
         host = "http://osoboebludo.com/api/?notabs&json&content_id=16&page=";
     }
 
@@ -157,78 +149,39 @@ public class FragmentRestaurants extends Fragment {
         toolbarTitle = getResources().getString(R.string.search);
     }
 
-    public static void setList(String s) {
+    public void setList(String s) {
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonObject jObject = parser.parse(s).getAsJsonObject();
         JsonElement jElement = jObject.get("items");
         JsonArray jArray = jElement.getAsJsonArray();
-        //JsonArray jArray = parser.parse(s).getAsJsonArray();
         Type type = new TypeToken<ArrayList<RestaurantsModel>>() {
         }.getType();
         list = gson.fromJson(jArray, type);
     }
 
-    public static void setPerPage(int count) {
+    public void setPerPage(int count) {
         perPage = count;
     }
 
-    public static void downloadObjects(final Context context) {
-        //Activity activity = (Activity) listView.getContext();
-        setPerPage(10);
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String query = null;
-        try {
-            query = URLEncoder.encode(keywords, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        stringRequest = new StringRequest(Request.Method.GET, host + page + "&keywords=" + query + "&per_page=" + perPage,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-                        if (refresh) {
-                            restaurantsModelList.clear();
-                        }
-                        if (s.equals("")) {
-                            listView.removeFooterView(footer);
-                            loading = false;
-                        } else {
-                            Log.d("stringRequest", s);
-                            Log.d("address", host + page);
-                            setList(s);
-                            restaurantsModelList.addAll(list);
-                            Log.d("list", restaurantsModelList.size() + "");
-                            searchRestaurantsListAdapter.notifyDataSetChanged();
-                            Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
-                            swipeRefreshLayout.setRefreshing(false);
-                            swipeRefreshLayout.setEnabled(false);
-                            loading = true;
-                            page++;
-                            progressBar.setVisibility(View.GONE);
-                            footer.setVisibility(View.GONE);
-                            refresh = false;
-                            if (isMap) {
-                                FragmentMap.setMarkers();
-                            }
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("news", volleyError.toString());
-                        Toast.makeText(context, "При загрузке данных произошла ошибка", Toast.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                        swipeRefreshLayout.setEnabled(false);
-                        loading = true;
-                    }
-                }) {
-        };
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(stringRequest);
+    private void setManager() {
+        //DownloadObjectsManager.setRefresh(refresh);
+        //DownloadObjectsManager.setLoading(loading);
+        DownloadObjectsManager.getInstance();
+        DownloadObjectsManager.setModelArrayList(restaurantsModelList);
+        DownloadObjectsManager.setSwipeRefreshLayout(swipeRefreshLayout);
+        DownloadObjectsManager.setProgressBar(progressBar);
+        DownloadObjectsManager.setKeywords(keywords);
+        DownloadObjectsManager.setFooter(footer);
+        DownloadObjectsManager.setListView(listView);
+        DownloadObjectsManager.setListAdapter(searchRestaurantsListAdapter);
+        DownloadObjectsManager.setPage(0);
+        DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
+    }
+
+    public void downloadObjects() {
+
+        DownloadObjectsManager.downloadObjects(getActivity(), FragmentMap.map);
+
     }
 }

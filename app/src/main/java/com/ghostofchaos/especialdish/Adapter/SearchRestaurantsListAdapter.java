@@ -31,10 +31,10 @@ public class SearchRestaurantsListAdapter extends ArrayAdapter {
     Typeface typeface;
     Context c;
     int res;
-    ArrayList<RestaurantsModel> objs;
+    ArrayList<Object> objs;
     String toolbarTitle;
 
-    public SearchRestaurantsListAdapter(Context context, int resource, ArrayList<RestaurantsModel> objs, String toolbarTitle) {
+    public SearchRestaurantsListAdapter(Context context, int resource, ArrayList<Object> objs, String toolbarTitle) {
         super(context, resource, objs);
         this.objs = objs;
         this.res = resource;
@@ -64,12 +64,13 @@ public class SearchRestaurantsListAdapter extends ArrayAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.title.setText(Html.fromHtml("<b>" + Utils.specCharactersHtmlToString(objs.get(position).getTitle() + "</b>")));
-        holder.intro.setText(Utils.specCharactersHtmlToString(objs.get(position).getIntro()));
-        holder.type.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(objs.get(position).getRestaurants_type()) + " " + "</i>"));
-        holder.address.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(objs.get(position).getAddress()) + " " + "</i>"));
+        RestaurantsModel model = (RestaurantsModel) objs.get(position);
+        holder.title.setText(Html.fromHtml("<b>" + Utils.specCharactersHtmlToString(model.getTitle() + "</b>")));
+        holder.intro.setText(Utils.specCharactersHtmlToString(model.getIntro()));
+        holder.type.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(model.getRestaurants_type()) + " " + "</i>"));
+        holder.address.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(model.getAddress()) + " " + "</i>"));
         Picasso.with(holder.image.getContext())
-                .load("http://osoboebludo.com/" + objs.get(position).getPhoto_small_path())
+                .load("http://osoboebludo.com/" + model.getPhoto_small_path())
                 .resize(MainActivity.width, 0)
                 .into(holder.image);
         convertView.setTag(holder);

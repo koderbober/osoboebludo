@@ -3,11 +3,13 @@ package com.ghostofchaos.especialdish;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -26,7 +28,6 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
-import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
@@ -43,11 +44,16 @@ public class MainActivity extends AppCompatActivity {
     FragmentSearch fragmentSearch;
     FragmentTransaction fTrans;
     public static int width;
+    public static Handler UIHandler;
+    public static boolean refresh;
+    public static boolean loading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        UIHandler = new Handler(Looper.getMainLooper());
 
         fragmentNews = new FragmentNews();
         fragmentProjects = new FragmentProjects();
@@ -105,15 +111,16 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new SectionDrawerItem().withName(R.string.search).withDivider(false).withTypeface(typeface),
                         new PrimaryDrawerItem().withName(R.string.search_restaurants).withIdentifier(1).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.search_dishes).withIdentifier(2).withTypeface(typeface),
                         new SectionDrawerItem().withName(R.string.feed).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.news).withIdentifier(2).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.projects).withIdentifier(3).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.reviews).withIdentifier(4).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.blogs).withIdentifier(5).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.calendar).withIdentifier(6).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.news).withIdentifier(3).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.projects).withIdentifier(4).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.reviews).withIdentifier(5).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.blogs).withIdentifier(6).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.calendar).withIdentifier(7).withTypeface(typeface),
                         new DividerDrawerItem(),
-                        new PrimaryDrawerItem().withName(R.string.about).withIdentifier(7).withTypeface(typeface),
-                        new PrimaryDrawerItem().withName(R.string.help).withIdentifier(8).withTypeface(typeface)
+                        new PrimaryDrawerItem().withName(R.string.about).withIdentifier(8).withTypeface(typeface),
+                        new PrimaryDrawerItem().withName(R.string.help).withIdentifier(9).withTypeface(typeface)
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
@@ -126,27 +133,27 @@ public class MainActivity extends AppCompatActivity {
                                 fTrans.replace(R.id.container, fragmentSearch, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 2:
+                            case 3:
                                 fTrans.replace(R.id.container, fragmentNews, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 3:
+                            case 4:
                                 fTrans.replace(R.id.container, fragmentProjects, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 4:
+                            case 5:
                                 fTrans.replace(R.id.container, fragmentReviews, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 5:
+                            case 6:
                                 fTrans.replace(R.id.container, fragmentBlogs, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 6:
+                            case 7:
                                 fTrans.replace(R.id.container, fragmentCalendar, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 7:
+                            case 8:
                                 fTrans.replace(R.id.container, fragmentAbout, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
