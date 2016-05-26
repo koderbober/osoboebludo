@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.FontCache;
 import com.ghostofchaos.especialdish.ListItem;
 import com.ghostofchaos.especialdish.MainActivity;
@@ -61,7 +62,7 @@ public class FeedListAdapter extends ArrayAdapter {
         holder.title.setText(Html.fromHtml("<b>" + Utils.specCharactersHtmlToString(objs.get(position).getTitle() + "</b>")));
         holder.intro.setText(Utils.specCharactersHtmlToString(objs.get(position).getIntro()));
         Picasso.with(holder.image.getContext())
-                .load("http://osoboebludo.com/uploads/content/" + objs.get(position).getImage())
+                .load(Adresses.GET_CONTENT + objs.get(position).getImage())
                 .resize(MainActivity.width, 0)
                 .into(holder.image);
         convertView.setTag(holder);

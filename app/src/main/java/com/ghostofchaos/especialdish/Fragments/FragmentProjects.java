@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.R;
 
 /**
@@ -17,7 +18,7 @@ public class FragmentProjects extends FragmentMain {
     @Override
     public void setHost() {
         super.setHost();
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=6&page=";
+        host = Adresses.GET_PROJECTS + Adresses.PAGE;
     }
 
     @Override

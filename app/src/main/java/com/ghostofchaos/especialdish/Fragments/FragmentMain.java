@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.ghostofchaos.especialdish.Adapter.FeedListAdapter;
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 import com.google.gson.Gson;
@@ -159,7 +160,7 @@ public class FragmentMain extends Fragment {
     }
 
     public void setHost() {
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=1&page=";
+        host = Adresses.GET_NEWS + Adresses.PAGE;
     }
 
     public void downloadObjects() {

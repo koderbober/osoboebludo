@@ -66,7 +66,7 @@ public class ListItem extends AppCompatActivity {
 
     private void setUI() {
         Picasso.with(getApplicationContext())
-                .load("http://osoboebludo.com/uploads/content/" + feedModel.getImage())
+                .load(Adresses.GET_CONTENT + feedModel.getImage())
                 .resize(MainActivity.width, 0)
                 .into(ivImg);
         tvTextTitle.setText(Utils.specCharactersHtmlToString(feedModel.getTitle()));

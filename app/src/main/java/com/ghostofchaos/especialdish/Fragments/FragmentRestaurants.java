@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.StringRequest;
 import com.ghostofchaos.especialdish.Adapter.SearchRestaurantsListAdapter;
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.DownloadObjectsManager;
 import com.ghostofchaos.especialdish.MainActivity;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
@@ -141,7 +142,7 @@ public class FragmentRestaurants extends Fragment {
     }
 
     public void setHost() {
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=16&page=";
+        host = Adresses.GET_RESTAURANTS + Adresses.PAGE;
     }
 
     public void setToolbar() {
@@ -176,7 +177,7 @@ public class FragmentRestaurants extends Fragment {
         DownloadObjectsManager.setListView(listView);
         DownloadObjectsManager.setListAdapter(searchRestaurantsListAdapter);
         DownloadObjectsManager.setPage(0);
-        DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
+        DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
     }
 
     public void downloadObjects() {

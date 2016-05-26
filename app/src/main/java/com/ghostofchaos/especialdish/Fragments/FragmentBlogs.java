@@ -2,6 +2,7 @@ package com.ghostofchaos.especialdish.Fragments;
 
 import android.text.Html;
 
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.R;
 
 /**
@@ -12,7 +13,7 @@ public class FragmentBlogs extends FragmentMain {
     @Override
     public void setHost() {
         super.setHost();
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=14&page=";
+        host = Adresses.GET_BLOGS + Adresses.PAGE;
     }
 
     @Override

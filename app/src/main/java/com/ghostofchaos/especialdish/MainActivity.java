@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.ghostofchaos.especialdish.Fragments.FragmentAbout;
 import com.ghostofchaos.especialdish.Fragments.FragmentBlogs;
 import com.ghostofchaos.especialdish.Fragments.FragmentCalendar;
+import com.ghostofchaos.especialdish.Fragments.FragmentMap;
 import com.ghostofchaos.especialdish.Fragments.FragmentNews;
 import com.ghostofchaos.especialdish.Fragments.FragmentProjects;
 import com.ghostofchaos.especialdish.Fragments.FragmentReviews;
@@ -60,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentCalendar = new FragmentCalendar();
         fragmentAbout = new FragmentAbout();
         fragmentSearch = new FragmentSearch();
+
+        DownloadObjectsManager.getInstance();
+        DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
+        DownloadObjectsManager.setPerPage(1000);
+        DownloadObjectsManager.downloadObjects(getApplicationContext(), FragmentMap.map, true);
 
         String fontName = "fonts/Proxima Nova Light.otf";
         typeface = FontCache.getTypeface(fontName, getApplicationContext());

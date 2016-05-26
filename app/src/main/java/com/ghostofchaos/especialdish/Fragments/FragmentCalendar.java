@@ -2,6 +2,7 @@ package com.ghostofchaos.especialdish.Fragments;
 
 import android.text.Html;
 
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.Objects.FeedModel;
 import com.ghostofchaos.especialdish.R;
 
@@ -19,7 +20,7 @@ public class FragmentCalendar extends FragmentMain {
     @Override
     public void setHost() {
         super.setHost();
-        host = "http://osoboebludo.com/api/?notabs&json&content_id=15&page=";
+        host = Adresses.GET_CALENDAR + Adresses.PAGE;
     }
 
     @Override

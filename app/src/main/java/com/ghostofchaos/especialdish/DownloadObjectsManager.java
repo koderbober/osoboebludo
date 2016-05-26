@@ -134,16 +134,19 @@ public class DownloadObjectsManager {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        stringRequest = new StringRequest(Request.Method.GET, host + page + "&keywords=" + query + "&per_page=" + perPage,
+        stringRequest = new StringRequest(Request.Method.GET, host + page + Adresses.KEYWORDS + query + Adresses.PER_PAGE + perPage,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
+
                         if (refresh) {
                             modelArrayList.clear();
                         }
+
                         if (s.equals("")) {
                             listView.removeFooterView(footer);
                             loading = false;
+
                         } else {
                             Log.d("stringRequest", s);
                             Log.d("address", host + page);
@@ -153,15 +156,19 @@ public class DownloadObjectsManager {
                                 modelArrayList.addAll(list);
                                 Log.d("list", modelArrayList.size() + "");
                                 Log.d("class", list.get(0).getClass().toString());
+
                                 if (saveToRealm) {
                                     Realm realm = Realm.getDefaultInstance();
                                     realm.beginTransaction();
+
                                     if (list.get(0).getClass() == RestaurantsModel.class) {
                                         realm.createOrUpdateAllFromJson(RestaurantsModel.class, s);
                                     }
+
                                     /*if (list.get(0).getClass() == DishesModel.class) {
                                         realm.createOrUpdateAllFromJson(DishesModel.class, s);
                                     }*/
+
                                     realm.commitTransaction();
                                 }
                             }
@@ -234,7 +241,7 @@ public class DownloadObjectsManager {
 
     }
 
-    public static LatLng getLocationFromAddress(Context context, String strAddress) {
+    private static LatLng getLocationFromAddress(Context context, String strAddress) {
 
         Geocoder coder = new Geocoder(context);
         List<Address> address;

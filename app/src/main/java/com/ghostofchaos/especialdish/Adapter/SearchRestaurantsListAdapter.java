@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ghostofchaos.especialdish.Adresses;
 import com.ghostofchaos.especialdish.FontCache;
 import com.ghostofchaos.especialdish.ListItem;
 import com.ghostofchaos.especialdish.MainActivity;
@@ -70,7 +71,7 @@ public class SearchRestaurantsListAdapter extends ArrayAdapter {
         holder.type.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(model.getRestaurants_type()) + " " + "</i>"));
         holder.address.setText(Html.fromHtml("<i>" + Utils.specCharactersHtmlToString(model.getAddress()) + " " + "</i>"));
         Picasso.with(holder.image.getContext())
-                .load("http://osoboebludo.com/" + model.getPhoto_small_path())
+                .load(Adresses.HOST + model.getPhoto_small_path())
                 .resize(MainActivity.width, 0)
                 .into(holder.image);
         convertView.setTag(holder);
