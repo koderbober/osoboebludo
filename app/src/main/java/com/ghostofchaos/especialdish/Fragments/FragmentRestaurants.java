@@ -76,7 +76,6 @@ public class FragmentRestaurants extends Fragment {
 
         setHost();
 
-
         searchRestaurantsListAdapter = new SearchRestaurantsListAdapter(getActivity(), R.layout.restaurants_item, restaurantsModelList, toolbarTitle);
         AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(searchRestaurantsListAdapter);
         animationAdapter.setAbsListView(listView);
@@ -97,9 +96,10 @@ public class FragmentRestaurants extends Fragment {
                                 0 : listView.getChildAt(0).getTop();
                 swipeRefreshLayout.setEnabled(firstVisibleItem == 0 && topRowVerticalPosition >= 0);
                 Boolean isRefreshing = swipeRefreshLayout.isRefreshing();
-                if (MainActivity.loading) {
+                if (DownloadObjectsManager.loading) {
                     if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                        MainActivity.loading = false;
+                        DownloadObjectsManager.loading = false;
+                        page = DownloadObjectsManager.page;
                         if (page > 1) {
                             footer.setVisibility(View.VISIBLE);
                         }
@@ -128,7 +128,7 @@ public class FragmentRestaurants extends Fragment {
             public void onRefresh() {
                 setPage();
                 swipeRefreshLayout.setRefreshing(true);
-                MainActivity.refresh = true;
+                DownloadObjectsManager.refresh = true;
                 downloadObjects();
             }
         });
@@ -181,7 +181,7 @@ public class FragmentRestaurants extends Fragment {
 
     public void downloadObjects() {
 
-        DownloadObjectsManager.downloadObjects(getActivity(), FragmentMap.map);
+        DownloadObjectsManager.downloadObjects(getActivity(), FragmentMap.map, false);
 
     }
 }

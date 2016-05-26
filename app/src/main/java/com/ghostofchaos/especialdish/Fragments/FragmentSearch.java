@@ -146,10 +146,10 @@ public class FragmentSearch extends Fragment {
                 DownloadObjectsManager.setProgressBar(progressBar);
                 DownloadObjectsManager.setKeywords(query);
                 DownloadObjectsManager.setListView(listView);
-                MainActivity.refresh = true;
+                DownloadObjectsManager.refresh = true;
                 DownloadObjectsManager.setPage(0);
                 DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
-                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map);
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);
                 return false;
             }
 
@@ -166,10 +166,10 @@ public class FragmentSearch extends Fragment {
                 DownloadObjectsManager.setProgressBar(progressBar);
                 DownloadObjectsManager.setKeywords("");
                 DownloadObjectsManager.setListView(listView);
-                MainActivity.refresh = true;
+                DownloadObjectsManager.refresh = true;
                 DownloadObjectsManager.setPage(0);
                 DownloadObjectsManager.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
-                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map);
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);
                 return false;
             }
         });

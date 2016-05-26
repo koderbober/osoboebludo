@@ -35,6 +35,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 /**
  * Created by Ghost on 23.05.2016.
  */
@@ -49,9 +51,9 @@ public class DownloadObjectsManager {
     static SwipeRefreshLayout swipeRefreshLayout;
     static ProgressBar progressBar;
     static View footer;
-    //static boolean refresh;
-    //static boolean loading = true;
-    static int page;
+    public static boolean refresh;
+    public static boolean loading = true;
+    public static int page;
     static ArrayList<Object> list;
     static String keywords = "";
     static int perPage;
@@ -124,7 +126,7 @@ public class DownloadObjectsManager {
         }
     }
 
-    public static void downloadObjects(final Context context, final GoogleMap map) {
+    public static void downloadObjects(final Context context, final GoogleMap map, final boolean saveToRealm) {
         RequestQueue queue = Volley.newRequestQueue(context);
         String query = null;
         try {
@@ -136,12 +138,12 @@ public class DownloadObjectsManager {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                        if (MainActivity.refresh) {
+                        if (refresh) {
                             modelArrayList.clear();
                         }
                         if (s.equals("")) {
                             listView.removeFooterView(footer);
-                            MainActivity.loading = false;
+                            loading = false;
                         } else {
                             Log.d("stringRequest", s);
                             Log.d("address", host + page);
@@ -150,6 +152,18 @@ public class DownloadObjectsManager {
                             if (list != null) {
                                 modelArrayList.addAll(list);
                                 Log.d("list", modelArrayList.size() + "");
+                                Log.d("class", list.get(0).getClass().toString());
+                                if (saveToRealm) {
+                                    Realm realm = Realm.getDefaultInstance();
+                                    realm.beginTransaction();
+                                    if (list.get(0).getClass() == RestaurantsModel.class) {
+                                        realm.createOrUpdateAllFromJson(RestaurantsModel.class, s);
+                                    }
+                                    /*if (list.get(0).getClass() == DishesModel.class) {
+                                        realm.createOrUpdateAllFromJson(DishesModel.class, s);
+                                    }*/
+                                    realm.commitTransaction();
+                                }
                             }
 
                             if (arrayAdapter != null) {
@@ -160,7 +174,7 @@ public class DownloadObjectsManager {
                                 swipeRefreshLayout.setRefreshing(false);
                                 swipeRefreshLayout.setEnabled(false);
                             }
-                            MainActivity.loading = true;
+                            loading = true;
                             page++;
 
                             if (progressBar != null)
@@ -169,7 +183,7 @@ public class DownloadObjectsManager {
                             if (footer != null)
                             footer.setVisibility(View.GONE);
 
-                            MainActivity.refresh = false;
+                            refresh = false;
                             if (map != null) {
                                 setMarkers(map, context);
                             }
@@ -183,7 +197,7 @@ public class DownloadObjectsManager {
                         Toast.makeText(context, "При загрузке данных произошла ошибка", Toast.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         swipeRefreshLayout.setEnabled(false);
-                        MainActivity.loading = true;
+                        loading = true;
                     }
                 }) {
         };

@@ -2,10 +2,12 @@ package com.ghostofchaos.especialdish.Objects;
 
 import java.io.Serializable;
 
+import io.realm.RealmObject;
+
 /**
  * Created by Ghost on 29.03.2016.
  */
-public class RestaurantsModel implements Serializable {
+public class RestaurantsModel extends RealmObject implements Serializable {
 
     private int id;
     private String title;

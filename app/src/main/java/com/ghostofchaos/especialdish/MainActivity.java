@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
     FragmentTransaction fTrans;
     public static int width;
     public static Handler UIHandler;
-    public static boolean refresh;
-    public static boolean loading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
