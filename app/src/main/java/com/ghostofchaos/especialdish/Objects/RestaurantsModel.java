@@ -3,12 +3,14 @@ package com.ghostofchaos.especialdish.Objects;
 import java.io.Serializable;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Ghost on 29.03.2016.
  */
 public class RestaurantsModel extends RealmObject implements Serializable {
 
+    @PrimaryKey
     private int id;
     private String title;
     private String intro;
@@ -21,6 +23,7 @@ public class RestaurantsModel extends RealmObject implements Serializable {
     private String email;
     private String city;
     private String restaurants_type;
+    private RestaurantsLocation location;
 
     public int getId() {
         return id;
@@ -116,5 +119,13 @@ public class RestaurantsModel extends RealmObject implements Serializable {
 
     public void setRestaurants_type(String restaurants_type) {
         this.restaurants_type = restaurants_type;
+    }
+
+    public RestaurantsLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(RestaurantsLocation location) {
+        this.location = location;
     }
 }

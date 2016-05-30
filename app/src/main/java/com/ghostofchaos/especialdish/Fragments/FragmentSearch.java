@@ -217,7 +217,8 @@ public class FragmentSearch extends Fragment {
         super.onResume();
         shadow.setVisibility(View.INVISIBLE);
 
+        DownloadObjectsManager.downloadObjects(FragmentMap.map, getActivity(), RestaurantsModel.class);
         /*FragmentRestaurants.setHost();
-        FragmentRestaurants.downloadObjects(getContext());*/
+        FragmentRestaurants.loadObjects(getContext());*/
     }
 }

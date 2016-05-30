@@ -1,6 +1,8 @@
 package com.ghostofchaos.especialdish;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.ghostofchaos.especialdish.Objects.RestaurantsLocation;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.RealmResults;
 
 /**
  * Created by Ghost on 23.05.2016.
@@ -58,10 +63,12 @@ public class DownloadObjectsManager {
     static String keywords = "";
     static int perPage;
     private static DownloadObjectsManager instance;
+    static SharedPreferences sPref;
 
-    private DownloadObjectsManager(){}
+    private DownloadObjectsManager() {
+    }
 
-    public static DownloadObjectsManager getInstance(){
+    public static DownloadObjectsManager getInstance() {
         if (instance == null) {
             instance = new DownloadObjectsManager();
         }
@@ -162,7 +169,18 @@ public class DownloadObjectsManager {
                                     realm.beginTransaction();
 
                                     if (list.get(0).getClass() == RestaurantsModel.class) {
-                                        realm.createOrUpdateAllFromJson(RestaurantsModel.class, s);
+                                        for (Object model : list) {
+                                            //((RestaurantsModel) model).setLocation(getLocationFromAddress(context, ((RestaurantsModel) model).getAddress()));
+                                            RestaurantsLocation location = new RestaurantsLocation();
+                                            LatLng latLng = getLocationFromAddress(context, ((RestaurantsModel) model).getAddress());
+                                            if (latLng != null) {
+                                                location.setLatitude(latLng.latitude);
+                                                location.setLongitude(latLng.longitude);
+                                                ((RestaurantsModel) model).setLocation(location);
+                                            }
+                                            realm.copyToRealmOrUpdate((RestaurantsModel) model);
+                                            //setMarkers(map, context);
+                                        }
                                     }
 
                                     /*if (list.get(0).getClass() == DishesModel.class) {
@@ -185,14 +203,23 @@ public class DownloadObjectsManager {
                             page++;
 
                             if (progressBar != null)
-                            progressBar.setVisibility(View.GONE);
+                                progressBar.setVisibility(View.GONE);
 
                             if (footer != null)
-                            footer.setVisibility(View.GONE);
+                                footer.setVisibility(View.GONE);
+
+                            sPref = getSharedPreferences(context);
+                            boolean isFirst = sPref.getBoolean("firstStart", false);
+                            //if (isFirst) {
+                            if (true) {
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                            }
 
                             refresh = false;
                             if (map != null) {
-                                setMarkers(map, context);
+                                //setMarkers(map, context);
                             }
                         }
                     }
@@ -215,33 +242,101 @@ public class DownloadObjectsManager {
         queue.add(stringRequest);
     }
 
+    public static void downloadObjects(GoogleMap map, Context context, Class<? extends RealmObject> cls) {
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        if (refresh) {
+            modelArrayList.clear();
+            list.clear();
+        }
+
+        if (cls == RestaurantsModel.class) {
+            RealmResults<RestaurantsModel> results = realm.where(RestaurantsModel.class).findAll();
+            for (RestaurantsModel model : results) {
+                modelArrayList.add(model);
+            }
+        }
+
+        if (false/*s.equals("")*/) {
+            listView.removeFooterView(footer);
+            loading = false;
+
+        } else {
+            if (map != null) {
+                if (cls == RestaurantsModel.class) {
+                    for (Object object : modelArrayList) {
+                        final RestaurantsModel model = (RestaurantsModel) object;
+                        LatLng loc = null;
+                        if (model.getAddress() != null) {
+                            loc = getLocationFromAddress(context, model.getAddress());
+                        }
+                        if (loc != null) {
+                            map.addMarker(new MarkerOptions()
+                                    .position(loc)
+                                    .title(model.getTitle()));
+                        }
+                    }
+                }
+            }
+
+            /*if (list.get(0).getClass() == DishesModel.class) {
+                realm.createOrUpdateAllFromJson(DishesModel.class, s);
+            }*/
+
+            realm.commitTransaction();
+
+            if (arrayAdapter != null) {
+                arrayAdapter.notifyDataSetChanged();
+                Log.d("listadapter", arrayAdapter.getCount() + "");
+            }
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+                swipeRefreshLayout.setEnabled(false);
+            }
+            loading = true;
+            page++;
+
+            if (progressBar != null)
+                progressBar.setVisibility(View.GONE);
+
+            if (footer != null)
+                footer.setVisibility(View.GONE);
+
+            refresh = false;
+        }
+    }
+
     public static void setMarkers(final GoogleMap map, final Context context) {
         new Thread(new Runnable() {
-            public void run(){
-                for (Object object : list) {
+            public void run() {
+                for (Object object : modelArrayList) {
                     final RestaurantsModel model = (RestaurantsModel) object;
                     LatLng loc = null;
                     if (model.getAddress() != null) {
                         loc = getLocationFromAddress(context, model.getAddress());
                     }
                     if (loc != null) {
-                        final LatLng finalLoc = loc;
-                        MainActivity.UIHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                map.addMarker(new MarkerOptions()
-                                        .position(finalLoc)
-                                        .title(model.getTitle()));
-                            }
-                        });
+                        addMarkerOnNewThread(map, loc, model.getTitle());
                     }
                 }
             }
         }).start();
-
     }
 
-    private static LatLng getLocationFromAddress(Context context, String strAddress) {
+    public static void addMarkerOnNewThread(final GoogleMap map, LatLng loc, final String title) {
+        final LatLng finalLoc = loc;
+        MainActivity.UIHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                map.addMarker(new MarkerOptions()
+                        .position(finalLoc)
+                        .title(title));
+            }
+        });
+    }
+
+    public static LatLng getLocationFromAddress(Context context, String strAddress) {
 
         Geocoder coder = new Geocoder(context);
         List<Address> address;
@@ -249,13 +344,13 @@ public class DownloadObjectsManager {
         Address location;
 
         try {
-            address = coder.getFromLocationName(strAddress, 5);
+            address = coder.getFromLocationName(strAddress, 2);
             if (address == null) {
                 return null;
             }
             if (address.size() > 0) {
                 location = address.get(0);
-                latLng = new LatLng(location.getLatitude(), location.getLongitude() );
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
 
         } catch (Exception ex) {
@@ -264,5 +359,9 @@ public class DownloadObjectsManager {
         }
 
         return latLng;
+    }
+
+    public static SharedPreferences getSharedPreferences(Context ctxt) {
+        return ctxt.getSharedPreferences("sPref", Context.MODE_PRIVATE);
     }
 }

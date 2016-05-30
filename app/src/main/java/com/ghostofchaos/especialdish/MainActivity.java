@@ -32,6 +32,9 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
 
     Typeface typeface;
@@ -61,11 +64,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentCalendar = new FragmentCalendar();
         fragmentAbout = new FragmentAbout();
         fragmentSearch = new FragmentSearch();
-
-        DownloadObjectsManager.getInstance();
-        DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
-        DownloadObjectsManager.setPerPage(1000);
-        DownloadObjectsManager.downloadObjects(getApplicationContext(), FragmentMap.map, true);
 
         String fontName = "fonts/Proxima Nova Light.otf";
         typeface = FontCache.getTypeface(fontName, getApplicationContext());
@@ -133,31 +131,31 @@ public class MainActivity extends AppCompatActivity {
                         fTrans = getSupportFragmentManager().beginTransaction();
 
                         switch (position) {
-                            case 1:
+                            case 2:
                                 fTrans.replace(R.id.container, fragmentSearch, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 3:
+                            case 5:
                                 fTrans.replace(R.id.container, fragmentNews, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 4:
+                            case 6:
                                 fTrans.replace(R.id.container, fragmentProjects, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 5:
+                            case 7:
                                 fTrans.replace(R.id.container, fragmentReviews, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 6:
+                            case 8:
                                 fTrans.replace(R.id.container, fragmentBlogs, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 7:
+                            case 9:
                                 fTrans.replace(R.id.container, fragmentCalendar, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;
-                            case 8:
+                            case 11:
                                 fTrans.replace(R.id.container, fragmentAbout, "tag");
                                 fTrans.addToBackStack("tag");
                                 break;

@@ -79,7 +79,7 @@ public class FragmentMap extends Fragment {
             DownloadModels.setPerPage(100);
             DownloadModels.setPage(0);
             DownloadModels.setHost("http://osoboebludo.com/api/?notabs&json&content_id=16&page=");
-            DownloadModels.downloadObjects(getActivity(), map);*/
+            DownloadModels.loadObjects(getActivity(), map);*/
 
     /*      Marker kiel = map.addMarker(new MarkerOptions()
                     .position(KIEL)
