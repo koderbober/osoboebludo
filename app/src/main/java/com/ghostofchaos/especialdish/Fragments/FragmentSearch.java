@@ -63,6 +63,7 @@ public class FragmentSearch extends Fragment {
     FrameLayout frameLayout;
     View shadow;
     String host;
+    static SearchView searchView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -136,13 +137,15 @@ public class FragmentSearch extends Fragment {
         menu.clear();
         MenuInflater menuInflater = getActivity().getMenuInflater();
         menuInflater.inflate(R.menu.menu_search, menu);
-
         MenuItem search = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) search.getActionView();
+        searchView = (SearchView) search.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                DownloadObjectsManager.getInstance();
+                FragmentRestaurants.keywords = query;
+                FragmentRestaurants.loadObjects(true);
+
+                /*DownloadObjectsManager.getInstance();
                 DownloadObjectsManager.setModelArrayList(restaurantsModelList);
                 DownloadObjectsManager.setProgressBar(progressBar);
                 DownloadObjectsManager.setKeywords(query);
@@ -150,7 +153,7 @@ public class FragmentSearch extends Fragment {
                 DownloadObjectsManager.refresh = true;
                 DownloadObjectsManager.setPage(0);
                 DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
-                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);*/
                 return false;
             }
 
@@ -162,7 +165,13 @@ public class FragmentSearch extends Fragment {
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
-                DownloadObjectsManager.getInstance();
+                FragmentRestaurants.restaurantsStaticModelList.clear();
+                FragmentRestaurants.restaurantsModelList.clear();
+                FragmentRestaurants.modelsCount = 0;
+                FragmentRestaurants.loadAll();
+                FragmentRestaurants.loadObjects(false);
+
+                /*DownloadObjectsManager.getInstance();
                 DownloadObjectsManager.setModelArrayList(restaurantsModelList);
                 DownloadObjectsManager.setProgressBar(progressBar);
                 DownloadObjectsManager.setKeywords("");
@@ -170,7 +179,7 @@ public class FragmentSearch extends Fragment {
                 DownloadObjectsManager.refresh = true;
                 DownloadObjectsManager.setPage(0);
                 DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
-                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);
+                DownloadObjectsManager.downloadObjects(getContext(), FragmentMap.map, false);*/
                 return false;
             }
         });
@@ -202,6 +211,10 @@ public class FragmentSearch extends Fragment {
         super.onStop();
         shadow.setVisibility(View.VISIBLE);
 
+        FragmentRestaurants.restaurantsStaticModelList.clear();
+        FragmentRestaurants.restaurantsModelList.clear();
+        FragmentRestaurants.modelsCount = 0;
+
         /*FragmentRestaurants.page = 1;
         FragmentRestaurants.refresh = true;
         FragmentRestaurants.keywords = "";
@@ -217,7 +230,8 @@ public class FragmentSearch extends Fragment {
         super.onResume();
         shadow.setVisibility(View.INVISIBLE);
 
-        DownloadObjectsManager.downloadObjects(FragmentMap.map, getActivity(), RestaurantsModel.class);
+
+        //DownloadObjectsManager.downloadObjects(FragmentMap.map, getActivity(), RestaurantsModel.class);
         /*FragmentRestaurants.setHost();
         FragmentRestaurants.loadObjects(getContext());*/
     }

@@ -1,5 +1,6 @@
 package com.ghostofchaos.especialdish.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,7 +28,9 @@ import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter
 
 import java.util.ArrayList;
 
+import io.realm.Case;
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 /**
@@ -35,21 +38,24 @@ import io.realm.RealmResults;
  */
 public class FragmentRestaurants extends Fragment {
 
-    ArrayList<Object> restaurantsModelList;
+    static ArrayList<Object> restaurantsModelList;
     static ArrayList<Object> restaurantsStaticModelList;
     String host;
-    SearchRestaurantsListAdapter searchRestaurantsListAdapter;
-    ListView listView;
-    SwipeRefreshLayout swipeRefreshLayout;
-    ProgressBar progressBar;
-    View footer;
+    static SearchRestaurantsListAdapter searchRestaurantsListAdapter;
+    static ListView listView;
+    static SwipeRefreshLayout swipeRefreshLayout;
+    static ProgressBar progressBar;
+    static View footer;
     TextView tvToolbar;
     String toolbarTitle;
-    int page;
-    int modelsCount = 0;
-    String keywords = "";
-    boolean refresh;
-    boolean loading = true;
+    static int page;
+    static int modelsCount = 0;
+    static String keywords = "";
+    static boolean refresh;
+    static boolean loading = true;
+    static Context context;
+
+    private static int MODELS_COUNT_PER_PAGE = 20;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +64,7 @@ public class FragmentRestaurants extends Fragment {
         progressBar = (ProgressBar) root.findViewById(R.id.progressBar);
         footer = View.inflate(getActivity(), R.layout.pagination_footer, null);
         footer.setVisibility(View.GONE);
+        context = getActivity();
         restaurantsModelList = new ArrayList<>();
         restaurantsStaticModelList = new ArrayList<>();
         swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipeRefresh);
@@ -83,8 +90,6 @@ public class FragmentRestaurants extends Fragment {
         animationAdapter.setAbsListView(listView);
         listView.setAdapter(animationAdapter);
 
-        //setManager();
-
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -105,7 +110,7 @@ public class FragmentRestaurants extends Fragment {
                         if (page > 1) {
                             footer.setVisibility(View.VISIBLE);
                         }
-                        loadObjects();
+                        loadObjects(false);
                     }
                 }
             }
@@ -130,19 +135,13 @@ public class FragmentRestaurants extends Fragment {
             public void onRefresh() {
                 setPage();
                 swipeRefreshLayout.setRefreshing(true);
-                DownloadObjectsManager.refresh = true;
-                loadObjects();
+                refresh = true;
+                clear();
+                loadAll();
+                loadObjects(false);
+                FragmentSearch.searchView.onActionViewCollapsed();
             }
         });
-
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-
-        RealmResults<RestaurantsModel> results = realm.where(RestaurantsModel.class).findAll();
-        for (RestaurantsModel model : results) {
-            restaurantsStaticModelList.add(model);
-        }
-        realm.commitTransaction();
 
         return root;
     }
@@ -175,59 +174,103 @@ public class FragmentRestaurants extends Fragment {
         DownloadObjectsManager.setHost(Adresses.GET_RESTAURANTS + Adresses.PAGE);
     }
 
-    public void loadObjects() {
+    public static void loadObjects(boolean search) {
 
-        //DownloadObjectsManager.loadObjects(getActivity(), FragmentMap.map, false);
-        //DownloadObjectsManager.loadObjects(FragmentMap.map, getActivity(), RestaurantsModel.class);
-
-        if (refresh) {
-            restaurantsModelList.clear();
+        if (search) {
+            searchRestaurants();
         }
-
-        for (int i = 0; i < 10; i++) {
-            restaurantsModelList.add(restaurantsStaticModelList.get(modelsCount));
-            modelsCount++;
+        for (int i = 0; i < MODELS_COUNT_PER_PAGE; i++) {
+            try {
+                restaurantsModelList.add(restaurantsStaticModelList.get(modelsCount));
+                modelsCount++;
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+                listView.removeFooterView(footer);
+                loading = false;
+                return;
+            }
         }
-
-        if (false/*s.equals("")*/) {
-            listView.removeFooterView(footer);
-            loading = false;
-
-        } else {
-            if (FragmentMap.map != null) {
-                for (Object object : restaurantsModelList) {
-                    final RestaurantsModel model = (RestaurantsModel) object;
-                    final LatLng[] loc = new LatLng[1];
-                    final String title = model.getTitle();
-                    if (model.getLocation() != null) {
-                        loc[0] = model.getLocation().getLatLng(); //DownloadObjectsManager.getLocationFromAddress(getActivity(), address);
-                    }
-                    if (loc[0] != null) {
-                        FragmentMap.map.addMarker(new MarkerOptions()
-                                .position(loc[0])
-                                .title(title));
-                    }
+        if (FragmentMap.map != null) {
+            for (Object object : restaurantsModelList) {
+                final RestaurantsModel model = (RestaurantsModel) object;
+                final LatLng[] loc = new LatLng[1];
+                final String title = model.getTitle();
+                if (model.getLocation() != null) {
+                    loc[0] = model.getLocation().getLatLng();
+                } else {
+                    String address = model.getAddress();
+                    loc[0] = DownloadObjectsManager.getLocationFromAddress(context, address);
+                }
+                if (loc[0] != null) {
+                    FragmentMap.map.addMarker(new MarkerOptions()
+                            .position(loc[0])
+                            .title(title));
                 }
             }
-
-            if (searchRestaurantsListAdapter != null) {
-                searchRestaurantsListAdapter.notifyDataSetChanged();
-                Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
-            }
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-                swipeRefreshLayout.setEnabled(false);
-            }
-            loading = true;
-            page++;
-
-            if (progressBar != null)
-                progressBar.setVisibility(View.GONE);
-
-            if (footer != null)
-                footer.setVisibility(View.GONE);
-
-            refresh = false;
         }
+        if (searchRestaurantsListAdapter != null) {
+            searchRestaurantsListAdapter.notifyDataSetChanged();
+            Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
+        }
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.setEnabled(false);
+        }
+        loading = true;
+        page++;
+
+        if (progressBar != null)
+            progressBar.setVisibility(View.GONE);
+
+        if (footer != null)
+            footer.setVisibility(View.GONE);
+
+        refresh = false;
+    }
+
+    public static void searchRestaurants() {
+
+        clear();
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+
+        RealmResults<RestaurantsModel> results = realm.where(RestaurantsModel.class).contains("title", keywords, Case.INSENSITIVE).findAll();
+        Log.i("query", results.toString());
+
+        for (RestaurantsModel model : results) {
+            restaurantsStaticModelList.add(model);
+        }
+        realm.commitTransaction();
+
+        if (searchRestaurantsListAdapter != null) {
+            searchRestaurantsListAdapter.notifyDataSetChanged();
+            Log.d("listadapter", searchRestaurantsListAdapter.getCount() + "");
+        }
+    }
+
+    public static void loadAll() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+
+        RealmResults<RestaurantsModel> results = realm.where(RestaurantsModel.class).findAll();
+        for (RestaurantsModel model : results) {
+            restaurantsStaticModelList.add(model);
+        }
+        realm.commitTransaction();
+    }
+
+    private static void clear() {
+        restaurantsStaticModelList.clear();
+        restaurantsModelList.clear();
+        modelsCount = 0;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadAll();
+        loadObjects(false);
     }
 }

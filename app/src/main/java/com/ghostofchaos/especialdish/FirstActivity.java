@@ -39,6 +39,8 @@ public class FirstActivity extends AppCompatActivity {
             DownloadObjectsManager.setModelArrayList(new ArrayList<Object>());
             DownloadObjectsManager.downloadObjects(getApplicationContext(), FragmentMap.map, true);
 
+        //finish();
+
         /*} else {
 
             Intent intent = new Intent(FirstActivity.this, MainActivity.class);
