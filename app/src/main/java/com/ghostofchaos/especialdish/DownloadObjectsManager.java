@@ -32,7 +32,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
@@ -89,6 +88,48 @@ public class DownloadObjectsManager {
         Type type = new TypeToken<ArrayList<RestaurantsModel>>() {
         }.getType();
         list = gson.fromJson(jArray, type);
+        for (Object model : list) {
+            setLowerCaseForSearch(model);
+        }
+    }
+
+    private static void setLowerCaseForSearch(Object model) {
+        if (model.getClass() == RestaurantsModel.class) {
+            RestaurantsModel restaurantsModel = (RestaurantsModel) model;
+            restaurantsModel.setSearch_title(restaurantsModel.getTitle().toLowerCase());
+            restaurantsModel.setSearch_intro(restaurantsModel.getIntro().toLowerCase());
+            restaurantsModel.setSearch_description(restaurantsModel.getDescription().toLowerCase());
+            restaurantsModel.setSearch_address(restaurantsModel.getAddress().toLowerCase());
+            restaurantsModel.setSearch_website(restaurantsModel.getWebsite().toLowerCase());
+            restaurantsModel.setSearch_email(restaurantsModel.getEmail().toLowerCase());
+            restaurantsModel.setSearch_city(restaurantsModel.getCity().toLowerCase());
+            restaurantsModel.setSearch_SPb_metro(restaurantsModel.getSPb_metro().toLowerCase());
+            restaurantsModel.setSearch_moscow_metro(restaurantsModel.getMoscow_metro().toLowerCase());
+            restaurantsModel.setSearch_restaurants_type(restaurantsModel.getRestaurants_type().toLowerCase());
+            restaurantsModel.setSearch_restaurants_cuisine(restaurantsModel.getRestaurants_cuisine().toLowerCase());
+            restaurantsModel.setSearch_restaurants_special(restaurantsModel.getRestaurants_special().toLowerCase());
+            restaurantsModel.setSearch_restaurants_entertainment(restaurantsModel.getRestaurants_entertainment().toLowerCase());
+            restaurantsModel.setSearch_restaurants_music(restaurantsModel.getRestaurants_music().toLowerCase());
+            restaurantsModel.setSearch_restaurants_misc(restaurantsModel.getRestaurants_misc().toLowerCase());
+
+            restaurantsModel.setSearch_all(
+                    restaurantsModel.getSearch_title() +
+                            restaurantsModel.getSearch_intro() +
+                            restaurantsModel.getSearch_description() +
+                            restaurantsModel.getSearch_address() +
+                            restaurantsModel.getSearch_website() +
+                            restaurantsModel.getSearch_email() +
+                            restaurantsModel.getSearch_city() +
+                            restaurantsModel.getSPb_metro() +
+                            restaurantsModel.getSearch_moscow_metro() +
+                            restaurantsModel.getSearch_restaurants_type() +
+                            restaurantsModel.getSearch_restaurants_cuisine() +
+                            restaurantsModel.getSearch_restaurants_special() +
+                            restaurantsModel.getSearch_restaurants_entertainment() +
+                            restaurantsModel.getSearch_restaurants_music() +
+                            restaurantsModel.getSearch_restaurants_misc()
+            );
+        }
     }
 
     public static void setModelArrayList(ArrayList<Object> modelArrayList) {
