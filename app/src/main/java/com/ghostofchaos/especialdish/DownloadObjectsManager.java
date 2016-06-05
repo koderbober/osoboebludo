@@ -96,20 +96,35 @@ public class DownloadObjectsManager {
     private static void setLowerCaseForSearch(Object model) {
         if (model.getClass() == RestaurantsModel.class) {
             RestaurantsModel restaurantsModel = (RestaurantsModel) model;
+            if (restaurantsModel.getTitle() != null)
             restaurantsModel.setSearch_title(restaurantsModel.getTitle().toLowerCase());
+            if (restaurantsModel.getIntro() != null)
             restaurantsModel.setSearch_intro(restaurantsModel.getIntro().toLowerCase());
+            if (restaurantsModel.getDescription() != null)
             restaurantsModel.setSearch_description(restaurantsModel.getDescription().toLowerCase());
+            if (restaurantsModel.getAddress() != null)
             restaurantsModel.setSearch_address(restaurantsModel.getAddress().toLowerCase());
+            if (restaurantsModel.getWebsite() != null)
             restaurantsModel.setSearch_website(restaurantsModel.getWebsite().toLowerCase());
+            if (restaurantsModel.getEmail() != null)
             restaurantsModel.setSearch_email(restaurantsModel.getEmail().toLowerCase());
+            if (restaurantsModel.getCity() != null)
             restaurantsModel.setSearch_city(restaurantsModel.getCity().toLowerCase());
+            if (restaurantsModel.getSPb_metro() != null)
             restaurantsModel.setSearch_SPb_metro(restaurantsModel.getSPb_metro().toLowerCase());
+            if (restaurantsModel.getMoscow_metro() != null)
             restaurantsModel.setSearch_moscow_metro(restaurantsModel.getMoscow_metro().toLowerCase());
+            if (restaurantsModel.getRestaurants_type() != null)
             restaurantsModel.setSearch_restaurants_type(restaurantsModel.getRestaurants_type().toLowerCase());
+            if (restaurantsModel.getRestaurants_cuisine() != null)
             restaurantsModel.setSearch_restaurants_cuisine(restaurantsModel.getRestaurants_cuisine().toLowerCase());
+            if (restaurantsModel.getRestaurants_special() != null)
             restaurantsModel.setSearch_restaurants_special(restaurantsModel.getRestaurants_special().toLowerCase());
+            if (restaurantsModel.getRestaurants_entertainment() != null)
             restaurantsModel.setSearch_restaurants_entertainment(restaurantsModel.getRestaurants_entertainment().toLowerCase());
+            if (restaurantsModel.getRestaurants_music() != null)
             restaurantsModel.setSearch_restaurants_music(restaurantsModel.getRestaurants_music().toLowerCase());
+            if (restaurantsModel.getRestaurants_misc() != null)
             restaurantsModel.setSearch_restaurants_misc(restaurantsModel.getRestaurants_misc().toLowerCase());
 
             restaurantsModel.setSearch_all(
