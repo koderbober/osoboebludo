@@ -187,26 +187,14 @@ public class FragmentRestaurants extends Fragment {
                 e.printStackTrace();
                 listView.removeFooterView(footer);
                 loading = false;
+                if (FragmentMap.map != null) {
+                    addMarkers();
+                }
                 return;
             }
         }
         if (FragmentMap.map != null) {
-            for (Object object : restaurantsModelList) {
-                final RestaurantsModel model = (RestaurantsModel) object;
-                final LatLng[] loc = new LatLng[1];
-                final String title = model.getTitle();
-                if (model.getLocation() != null) {
-                    loc[0] = model.getLocation().getLatLng();
-                } else {
-                    String address = model.getAddress();
-                    loc[0] = DownloadObjectsManager.getLocationFromAddress(context, address);
-                }
-                if (loc[0] != null) {
-                    FragmentMap.map.addMarker(new MarkerOptions()
-                            .position(loc[0])
-                            .title(title));
-                }
-            }
+            addMarkers();
         }
         if (searchRestaurantsListAdapter != null) {
             searchRestaurantsListAdapter.notifyDataSetChanged();
@@ -228,6 +216,25 @@ public class FragmentRestaurants extends Fragment {
         refresh = false;
     }
 
+    private static void addMarkers() {
+        for (Object object : restaurantsModelList) {
+            final RestaurantsModel model = (RestaurantsModel) object;
+            final LatLng[] loc = new LatLng[1];
+            final String title = model.getTitle();
+            if (model.getLocation() != null) {
+                loc[0] = model.getLocation().getLatLng();
+            } else {
+                String address = model.getAddress();
+                loc[0] = DownloadObjectsManager.getLocationFromAddress(context, address);
+            }
+            if (loc[0] != null) {
+                FragmentMap.map.addMarker(new MarkerOptions()
+                        .position(loc[0])
+                        .title(title));
+            }
+        }
+    }
+
     public static void searchRestaurants() {
 
         clear();
@@ -235,7 +242,10 @@ public class FragmentRestaurants extends Fragment {
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
 
-        RealmResults<RestaurantsModel> results = realm.where(RestaurantsModel.class).contains("title", keywords, Case.INSENSITIVE).findAll();
+        RealmResults<RestaurantsModel> results = realm
+                .where(RestaurantsModel.class)
+                .contains("search_all", keywords, Case.INSENSITIVE)
+                .findAll();
         Log.i("query", results.toString());
 
         for (RestaurantsModel model : results) {
@@ -264,6 +274,7 @@ public class FragmentRestaurants extends Fragment {
         restaurantsStaticModelList.clear();
         restaurantsModelList.clear();
         modelsCount = 0;
+        FragmentMap.map.clear();
     }
 
     @Override
