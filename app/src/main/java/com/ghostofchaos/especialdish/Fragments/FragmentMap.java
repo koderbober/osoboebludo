@@ -1,10 +1,13 @@
 package com.ghostofchaos.especialdish.Fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -86,13 +89,22 @@ public class FragmentMap extends Fragment {
                     .title("Kiel")
                     .snippet("Kiel is cool");*/
 
-            Location lastKnownLocationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (lastKnownLocationGPS != null) {
-                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocationGPS.getLatitude(), lastKnownLocationGPS.getLongitude())));
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             } else {
-                Location loc = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc.getLatitude(), loc.getLongitude())));
+                Location lastKnownLocationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastKnownLocationGPS != null) {
+                    map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocationGPS.getLatitude(), lastKnownLocationGPS.getLongitude())));
+                } else {
+                    Location loc = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                    if (loc != null) {
+                        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(loc.getLatitude(), loc.getLongitude())));
+                    } else {
+                        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(55.7485169, 37.0720757)));
+                    }
+                }
             }
+            //55.7485169,37.0720757
 
             if (myLocation != null) {
                 double dLatitude = myLocation.getLatitude();

@@ -22,6 +22,7 @@ import com.ghostofchaos.especialdish.DownloadObjectsManager;
 import com.ghostofchaos.especialdish.MainActivity;
 import com.ghostofchaos.especialdish.Objects.RestaurantsModel;
 import com.ghostofchaos.especialdish.R;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nhaarman.listviewanimations.appearance.simple.AlphaInAnimationAdapter;
@@ -230,7 +231,8 @@ public class FragmentRestaurants extends Fragment {
             if (loc[0] != null) {
                 FragmentMap.map.addMarker(new MarkerOptions()
                         .position(loc[0])
-                        .title(title));
+                        .title(title))
+                        .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.restaurant_icon));
             }
         }
     }
